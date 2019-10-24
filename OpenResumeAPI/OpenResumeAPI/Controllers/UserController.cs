@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Business.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace OpenResumeAPI.Controllers
 {
@@ -18,11 +20,13 @@ namespace OpenResumeAPI.Controllers
     public class UserController : Controller
     {
 
-        IUserBusiness business;
+        private IUserBusiness business;
+        private ILogger<UserController> logger;
 
-        public UserController(IUserBusiness business)
+        public UserController(IUserBusiness business, ILogger<UserController> logger)
         {
             this.business = business;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -34,18 +38,42 @@ namespace OpenResumeAPI.Controllers
         [HttpPost("login")]
         public ActionResult Login([FromBody]User user)
         {
-            return View();
+            try
+            {
+                User result = business.Login(user);
+                if (result != null)
+                    return Ok(result);
+                else
+                    return Unauthorized();
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode(500, "LOGIN_ERROR");
+            }
         }
 
         /// <summary>
         /// Get user data
         /// </summary>
         /// <returns></returns>
-        [HttpPost("")]
-        [ValidateAntiForgeryToken]
-        public ActionResult Index()
+        [HttpGet()]
+        public ActionResult Index([FromQuery]int id)
         {
-            return View();
+            try
+            {
+                User result = business.ByID(id);
+                if (result != null)
+                    return Ok(result);
+                else
+                    return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode(500);
+            }
         }
 
         /// <summary>
@@ -54,7 +82,7 @@ namespace OpenResumeAPI.Controllers
         /// <param name="user">user</param>
         /// <returns></returns>
         [HttpPost("create")]
-        [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public ActionResult Create([FromBody]User user)
         {
             return View();
@@ -66,7 +94,6 @@ namespace OpenResumeAPI.Controllers
         /// <param name="user">user</param>
         /// <returns></returns>
         [HttpPost("update")]
-        [ValidateAntiForgeryToken]
         public ActionResult Update([FromBody]User user)
         {
             return View();
@@ -78,7 +105,6 @@ namespace OpenResumeAPI.Controllers
         /// <param name="user">user</param>
         /// <returns></returns>
         [HttpDelete("delete")]
-        [ValidateAntiForgeryToken]
         public ActionResult Delete([FromBody]User user)
         {
             return View();

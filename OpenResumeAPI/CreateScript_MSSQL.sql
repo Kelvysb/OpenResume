@@ -68,7 +68,7 @@ go
 
 if not exists (select * from sysobjects where name = 'fields' and type = 'U')
 begin
-	create table fields (
+	drop table fields (
 		id int identity not null,
 		name varchar(100) not null,
 		description varchar(500) not null,

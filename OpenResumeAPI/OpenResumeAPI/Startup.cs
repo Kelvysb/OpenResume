@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OpenResumeAPI.Business;
 using OpenResumeAPI.Business.Interfaces;
@@ -12,6 +13,7 @@ using OpenResumeAPI.Services;
 using OpenResumeAPI.Services.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace OpenResumeAPI
@@ -68,6 +70,11 @@ namespace OpenResumeAPI
             services.AddScoped<IBlockBusiness, BlockBusiness>();
             services.AddScoped<IFieldBusiness, FieldBusiness>();
 
+            var security = new Dictionary<string, IEnumerable<string>>
+                {
+                    {"Bearer", new string[] { }},
+
+                };
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info
@@ -81,6 +88,14 @@ namespace OpenResumeAPI
                                             Url = "https://github.com/kelvysb"
                                         }
                                     });
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityRequirement(security);
             });
 
 
@@ -92,14 +107,17 @@ namespace OpenResumeAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+
+            loggerFactory.AddFile("Logs/openresume-{Date}.txt");
+
             app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
+            app.UseSwaggerUI(options =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenResume API V1");
-                c.RoutePrefix = string.Empty;
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenResume API V1");
+                options.RoutePrefix = string.Empty;
             });
 
             if (env.IsDevelopment())

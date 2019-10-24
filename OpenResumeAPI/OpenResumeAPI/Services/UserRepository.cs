@@ -1,8 +1,10 @@
 ﻿using BDataBaseStandard;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static BDataBaseStandard.DataBaseException;
 
 namespace OpenResumeAPI.Services
 {
@@ -12,18 +14,33 @@ namespace OpenResumeAPI.Services
 
         public User FindByEmail(string email)
         {
-            List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+            try
             {
-                new clsDataBaseParametes("EMAIL", email)
-            };
+                List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+                {
+                    new clsDataBaseParametes("EMAIL", email)
+                };
 
-            return dataBase.fnExecute<User>($@"Select
-                                                    {Columns()}
-                                                from 
-                                                    {tableName}
-                                                where
-                                                    email = @EMAIL", par)
-                            .FirstOrDefault();
+                return dataBase.fnExecute<User>($@"Select
+                                                        {Columns()}
+                                                    from 
+                                                        {tableName}
+                                                    where
+                                                        email = @EMAIL", par)
+                                .FirstOrDefault();
+
+            }
+            catch(DataBaseException dbex)
+            {
+                if (dbex.Code == enmDataBaseExeptionCode.NotExists)
+                    return null;
+                else
+                    throw new Exception($"{dbex.Code} - {dbex.Message}");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public User FindByLogin(string login)

@@ -5,6 +5,10 @@ namespace OpenResumeAPI.Models
 {
     public abstract class ModelBase : IModel
     {
+        protected ModelBase()
+        {
+        }
+
         protected ModelBase(int id, string name, string description, int itemOrder)
         {
             Id = id;
@@ -14,16 +18,16 @@ namespace OpenResumeAPI.Models
         }
 
         [ColumnName("id")]
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         [ColumnName("name")]
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         [ColumnName("description")]
-        public string Description { get; private set; }
+        public string Description { get; set; }
 
         [ColumnName("itemOrder")]
-        public int ItemOrder { get; private set; }
+        public int ItemOrder { get; set; }
 
     }
 }

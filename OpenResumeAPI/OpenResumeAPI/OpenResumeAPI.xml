@@ -16,7 +16,7 @@
             <param name="user">user</param>
             <returns></returns>
         </member>
-        <member name="M:OpenResumeAPI.Controllers.UserController.Index">
+        <member name="M:OpenResumeAPI.Controllers.UserController.Index(System.Int32)">
             <summary>
             Get user data
             </summary>

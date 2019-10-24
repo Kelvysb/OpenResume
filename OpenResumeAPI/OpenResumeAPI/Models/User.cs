@@ -6,6 +6,8 @@ namespace OpenResumeAPI.Models
     [TableName("users")]
     public class User : ModelBase
     {
+        public User() : base() { }
+
         public User(int id,
                     string name,
                     string description,
@@ -34,33 +36,33 @@ namespace OpenResumeAPI.Models
         }
 
         [ColumnName("login")]
-        public string Login { get; private set; }
+        public string Login { get; set; }
 
         [ColumnName("email")]
-        public string Email { get; private set; }
+        public string Email { get; set; }
 
         [ColumnName("lastName")]
-        public string LastName { get; private set; }
+        public string LastName { get; set; }
 
         [ColumnName("passwordHash")]
-        public string PasswordHash { get; private set; }
+        public string PasswordHash { get; set; }
 
         [ColumnName("emailConfirmed")]
-        public bool EmailConfirmed { get; private set; }
+        public bool EmailConfirmed { get; set; }
 
         [ColumnName("resetPassword")]
-        public bool ResetPasword { get; private set; }
+        public bool ResetPasword { get; set; }
 
         [ColumnName("createdDate")]
-        public DateTime CreatedDate { get; private set; }
+        public DateTime CreatedDate { get; set; }
 
         [ColumnName("updatedDate")]
-        public DateTime UpdatedDate { get; private set; }
+        public DateTime UpdatedDate { get; set; }
 
         [ColumnName("lastActivity")]
-        public DateTime LastActivity { get; private set; }
+        public DateTime LastActivity { get; set; }
 
-        public string Token { get; private set; }
+        public string Token { get; set; }
 
     }
 }
