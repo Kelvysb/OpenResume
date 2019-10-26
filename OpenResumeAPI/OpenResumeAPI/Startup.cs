@@ -14,6 +14,7 @@ using OpenResumeAPI.Services.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace OpenResumeAPI
@@ -31,10 +32,25 @@ namespace OpenResumeAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
 
-            var appSettings = appSettingsSection.Get<AppSettings>();
+            IConfiguration config;
+            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != null 
+                && Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT").Equals("Development"))
+            {
+                config = new ConfigurationBuilder()
+                    .AddJsonFile(Path.Combine("Config", "dev.json"), optional: true, reloadOnChange: true)
+                    .Build();
+            }
+            else
+            {
+                config = new ConfigurationBuilder()
+                    .AddJsonFile(Path.Combine("Config", "prod.json"), optional: true, reloadOnChange: true)
+                    .Build();
+            }
+
+            services.Configure<AppSettings>(config);
+
+            var appSettings = config.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(x =>

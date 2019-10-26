@@ -1,0 +1,4 @@
+{
+    "Secret": "S21DAS2111F61HTBN6G51D6F8H61ZFTHS6E81FA",
+    "ConnectionString": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=OpenResume;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
+}

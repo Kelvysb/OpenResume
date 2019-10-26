@@ -1,0 +1,8 @@
+2019-10-26T09:14:54.9830413-03:00 0HLQQ1ODOF505:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:5000/index.html   (ca22a1cb)
+2019-10-26T09:14:55.5016068-03:00 0HLQQ1ODOF505:00000001 [INF] Request finished in 528.0868ms 200 text/html (791a596a)
+2019-10-26T09:14:56.4004555-03:00 0HLQQ1ODOF505:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json   (ca22a1cb)
+2019-10-26T09:14:56.6379168-03:00 0HLQQ1ODOF505:00000002 [INF] Request finished in 236.9248ms 200 application/json;charset=utf-8 (791a596a)
+2019-10-26T09:15:30.2526143-03:00 0HLQQ1ODOF505:00000003 [INF] Request starting HTTP/1.1 POST http://localhost:5000/api/User/login application/json-patch+json 379 (ca22a1cb)
+2019-10-26T09:15:30.3551700-03:00 0HLQQ1ODOF505:00000003 [INF] CORS policy execution successful. (5409d6ef)
+2019-10-26T09:15:30.9788594-03:00 0HLQQ1ODOF505:00000003 [INF] Executing endpoint '"OpenResumeAPI.Controllers.UserController.Login (OpenResumeAPI)"' (500cc934)
+2019-10-26T09:15:31.0233482-03:00 0HLQQ1ODOF505:00000003 [INF] Route matched with "{action = \"Login\", controller = \"User\"}". Executing controller action with signature "Microsoft.AspNetCore.Mvc.ActionResult Login(OpenResumeAPI.Models.User)" on controller "OpenResumeAPI.Controllers.UserController" ("OpenResumeAPI"). (122b2fdf)
