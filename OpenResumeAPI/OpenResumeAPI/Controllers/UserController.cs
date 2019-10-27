@@ -147,8 +147,10 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                business.Insert(user);
-                return Ok();
+                if (business.Create(user))
+                    return Ok();               
+                else
+                    return StatusCode((int)HttpStatusCode.Conflict, "USER_DUPLICATED");
             }
             catch (Exception ex)
             {

@@ -75,6 +75,7 @@ namespace OpenResumeAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             //Services
+            services.AddSingleton<IEmailHelper, EmailHelper>();
             services.AddSingleton<IIdentityValidator, IdentityValidator>();
             services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<IDataBaseFactory, DataBaseFactory>();

@@ -156,7 +156,7 @@ namespace OpenResumeAPI.Services
             try
             {
                 return dataBase.fnExecute<int>($@"insert into {tableName} (
-                                                    {Columns()}
+                                                    {ColumnsForInsert()}
                                                 ) output inserted.id 
                                                 values (
                                                      {ColumnsParametersForInsert()}
@@ -233,6 +233,17 @@ namespace OpenResumeAPI.Services
         {
             List<string> result = typeof(Model).GetProperties()
                             .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null)
+                            .Select(prop => ((ColumnName)prop.GetCustomAttribute(typeof(ColumnName), true)).Name)
+                            .ToList();
+
+            return $"{String.Join(",\r\n", result)} \r\n";
+        }
+
+        protected virtual string ColumnsForInsert()
+        {
+            List<string> result = typeof(Model).GetProperties()
+                            .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null
+                                    && !((ColumnName)prop.GetCustomAttribute(typeof(ColumnName), true)).Name.Equals("id", StringComparison.InvariantCultureIgnoreCase))
                             .Select(prop => ((ColumnName)prop.GetCustomAttribute(typeof(ColumnName), true)).Name)
                             .ToList();
 

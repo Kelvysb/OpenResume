@@ -4,5 +4,13 @@
     {
         string ConnectionString { get; set; }
         string Secret { get; set; }
+        string Home { get; set; }
+        string EmailServer { get; set; }
+        int EmailPort { get; set; }
+        string EmailUser { get; set; }
+        string EmailPassword { get; set; }
+        string Email { get; set; }
+        string From { get; set; }
+        string Subject { get; set; }
     }
 }

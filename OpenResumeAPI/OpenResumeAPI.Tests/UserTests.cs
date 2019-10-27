@@ -42,7 +42,8 @@ namespace OpenResumeAPI.Tests
             userController = new UserController(
                                  new UserBusiness(
                                      new UserRepository(dataBaseFactory),
-                                     new AppSettings() { Secret = "S21DAS2111F61HTBN6G51D6F8H61ZFTHS6E81FA" }),
+                                     new AppSettings() { Secret = "S21DAS2111F61HTBN6G51D6F8H61ZFTHS6E81FA" },
+                                     EmailSenderHelper.Create()),
                                  LoggerHelper.Create<UserController>(),
                                  ValidatorHelper.Create(1, "FAKE_TOKEN"));
 

@@ -7,5 +7,6 @@ namespace OpenResumeAPI.Business.Interfaces
         User Login(User user);
         bool EmailConfirm(string email, string token);
         bool PasswordChange(int userID, string oldPasswrd, string newPassword);
+        bool Create(User user);
     }
 }
