@@ -11,14 +11,14 @@ namespace OpenResumeAPI.Services
 
         public List<Field> FindByUserAndResumeAndBlock(int userId, int resumeId, int blockId)
         {
-            List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+            try
             {
-                new clsDataBaseParametes("USERID", userId.ToString()),
-                new clsDataBaseParametes("RESUMEID", resumeId.ToString()),
-                new clsDataBaseParametes("BLOCKID", blockId.ToString())
-            };
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("USERID", userId);
+                par.Add("RESUMEID", resumeId);
+                par.Add("BLOCKID", blockId);
 
-            return dataBase.fnExecute<Field>($@"Select
+                return dataBase.fnExecute<Field>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
@@ -26,6 +26,19 @@ namespace OpenResumeAPI.Services
                                                     userId = @USERID
                                                     and resumeId = @RESUMEID
                                                     and blockId = @BLOCKID", par);
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return new List<Field>();
+                else
+                    throw new System.Exception($"Database Errror: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

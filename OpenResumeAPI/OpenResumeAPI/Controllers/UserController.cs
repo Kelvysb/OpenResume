@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Business.Interfaces;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Mvc.Filters;
+using OpenResumeAPI.Helpers.Interfaces;
+using System.Net;
 
 namespace OpenResumeAPI.Controllers
 {
@@ -17,16 +14,16 @@ namespace OpenResumeAPI.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController : Controller
+    public class UserController : ControllerBase
     {
 
         private IUserBusiness business;
-        private ILogger<UserController> logger;
 
-        public UserController(IUserBusiness business, ILogger<UserController> logger)
+        public UserController(IUserBusiness business,
+                              ILogger<UserController> logger,
+                              IIdentityValidator validator) : base(logger, validator)
         {
             this.business = business;
-            this.logger = logger;
         }
 
         /// <summary>
@@ -36,7 +33,7 @@ namespace OpenResumeAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("login")]
-        public ActionResult Login([FromBody]User user)
+        public ActionResult<User> Login([FromBody]User user)
         {
             try
             {
@@ -44,8 +41,7 @@ namespace OpenResumeAPI.Controllers
                 if (result != null)
                     return Ok(result);
                 else
-                    return Unauthorized();
-
+                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_LOGIN");
             }
             catch (Exception ex)
             {
@@ -54,25 +50,89 @@ namespace OpenResumeAPI.Controllers
             }
         }
 
+
         /// <summary>
-        /// Get user data
+        /// Emaiol confirmation
         /// </summary>
+        /// <param name="email">Email</param>
+        /// <param name="token">Token</param>
         /// <returns></returns>
-        [HttpGet()]
-        public ActionResult Index([FromQuery]int id)
+        [AllowAnonymous]
+        [HttpGet("emailconfirm")]
+        public ActionResult EmailConfirm([FromQuery]string email, [FromQuery]string token)
         {
             try
             {
-                User result = business.ByID(id);
-                if (result != null)
-                    return Ok(result);
+                if (business.EmailConfirm(email, token))
+                    return Ok();
                 else
-                    return BadRequest();
+                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_CONFIRMATION_TOKEN");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode(500);
+                return StatusCode(500, "LOGIN_ERROR");
+            }
+        }
+
+
+        /// <summary>
+        /// Change Password
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="oldPassword"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        [HttpPost("passwordchange")]
+        public ActionResult PasswordChange([FromBody]int userId, [FromBody]string oldPassword, [FromBody]string newPassword)
+        {
+            try
+            {
+                if (validator.Validate(userId, Request.Headers["Authorization"]))
+                {                    
+                    if (business.PasswordChange(userId, oldPassword, newPassword))
+                        return Ok();
+                    else
+                        return StatusCode((int)HttpStatusCode.Forbidden, "WRONG_PASSWORD");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "PASSWORD_CHANGE_ERROR");
+            }
+        }
+
+        /// <summary>
+        /// Get user data
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{userId}")]
+        public ActionResult<User> Find([FromRoute]int userId)
+        {
+            try
+            {
+                if (validator.Validate(userId, Request.Headers["Authorization"]))
+                {
+                    User result = business.ByID(userId);
+                    if (result != null)
+                        return Ok(result);
+                    else
+                        return BadRequest();
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_FIND_ERROR");
             }
         }
 
@@ -81,11 +141,20 @@ namespace OpenResumeAPI.Controllers
         /// </summary>
         /// <param name="user">user</param>
         /// <returns></returns>
-        [HttpPost("create")]
         [AllowAnonymous]
+        [HttpPut]
         public ActionResult Create([FromBody]User user)
         {
-            return View();
+            try
+            {
+                business.Insert(user);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_CREATE_ERROR");
+            }
         }
 
         /// <summary>
@@ -93,10 +162,28 @@ namespace OpenResumeAPI.Controllers
         /// </summary>
         /// <param name="user">user</param>
         /// <returns></returns>
-        [HttpPost("update")]
+        [HttpPost]
         public ActionResult Update([FromBody]User user)
         {
-            return View();
+            try
+            {
+                if (validator.Validate(user.Id, Request.Headers["Authorization"]))
+                {
+                    if (business.Update(user))
+                        return Ok();
+                    else
+                        return BadRequest();
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_UPDATE_ERROR");
+            }
         }
 
         /// <summary>
@@ -104,10 +191,28 @@ namespace OpenResumeAPI.Controllers
         /// </summary>
         /// <param name="user">user</param>
         /// <returns></returns>
-        [HttpDelete("delete")]
+        [HttpDelete]
         public ActionResult Delete([FromBody]User user)
         {
-            return View();
+            try
+            {
+                if (validator.Validate(user.Id, Request.Headers["Authorization"]))
+                {
+                    if (business.Delete(user))
+                        return Ok();
+                    else
+                        return BadRequest();
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_DELETE_ERROR");
+            }
         }
 
     }

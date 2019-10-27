@@ -18,6 +18,8 @@ begin
 		passwordHash varchar(500) not null,
 		emailConfirmed bit not null,
 		resetPassword bit not null,
+		resetToken varchar(500) not null,
+		confirmationToken varchar(500) not null,
 		createdDate datetime not null,
 		updatedDate datetime not null,
 		lastActivity datetime not null,
@@ -37,6 +39,7 @@ begin
 		userId int not null,
 		itemOrder int not null,
 		link varchar(100) not null,
+		token varchar(500) not null,
 		language varchar(100) not null,
 		template varchar(100) not null,		
 		accessLevel int not null,		
@@ -68,7 +71,7 @@ go
 
 if not exists (select * from sysobjects where name = 'fields' and type = 'U')
 begin
-	drop table fields (
+	create table fields (
 		id int identity not null,
 		name varchar(100) not null,
 		description varchar(500) not null,
@@ -80,6 +83,7 @@ begin
 		level int not null,
 		initialDate datetime not null,
 		finalDate datetime not null,
+		present bit not null,
 		primary key (id, userId, resumeId, blockId)
 	)
 	create index Ifields1 on fields(fieldType)

@@ -17,7 +17,9 @@ namespace OpenResumeAPI.Models
                     string lastName,
                     string passwordHash,
                     bool emailConfirmed,
-                    bool resetPasword,
+                    bool resetPassword,
+                    string resetToken,
+                    string confirmationToken,
                     string token,
                     DateTime createdDate,
                     DateTime updatedDate,
@@ -28,7 +30,9 @@ namespace OpenResumeAPI.Models
             LastName = lastName;
             PasswordHash = passwordHash;
             EmailConfirmed = emailConfirmed;
-            ResetPasword = resetPasword;
+            ResetPassword = resetPassword;
+            ResetToken = resetToken;
+            ConfirmationToken = confirmationToken;
             CreatedDate = createdDate;
             UpdatedDate = updatedDate;
             LastActivity = lastActivity;
@@ -51,7 +55,13 @@ namespace OpenResumeAPI.Models
         public bool EmailConfirmed { get; set; }
 
         [ColumnName("resetPassword")]
-        public bool ResetPasword { get; set; }
+        public bool ResetPassword { get; set; }
+
+        [ColumnName("resetToken")]
+        public string ResetToken { get; set; }
+
+        [ColumnName("confirmationToken")]
+        public string ConfirmationToken { get; set; }
 
         [ColumnName("createdDate")]
         public DateTime CreatedDate { get; set; }

@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using OpenResumeAPI.Business.Interfaces;
-using OpenResumeAPI.Helpers;
+using OpenResumeAPI.Helpers.Interfaces;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
 using System;
@@ -14,43 +13,104 @@ namespace OpenResumeAPI.Business
     public class UserBusiness : CRUDBusiness<User, IUserRepository>, IUserBusiness
     {
 
-        private IOptions<AppSettings> appSettings;
+        private IAppSettings appSettings;
 
-        public UserBusiness(IUserRepository repository, IOptions<AppSettings> appSettings) : base(repository)
+        public UserBusiness(IUserRepository repository, IAppSettings appSettings) : base(repository)
         {
             this.appSettings = appSettings;
         }
 
         public User Login(User user)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(appSettings.Value.Secret);
             User result = repository.FindByEmail(user.Email);
-            result = new User() { Id = 1 };
-
-            if (result != null && result.PasswordHash.Equals(user.PasswordHash))
-            {
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, result.Id.ToString())
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                result.Token = tokenHandler.WriteToken(token);
-                result.PasswordHash = null;
+            if (result != null && result.PasswordHash.Equals(user.PasswordHash) && result.EmailConfirmed)
+            {                
+                result.LastActivity = DateTime.UtcNow;
+                repository.Update(result);
+                result.Token = CreateToken(result.Id);
+                result = ClearSecrets(result);
             }
             else
             {
                 result = null;
             }
-
             return result;
         }
 
+        private string CreateToken(int userId)
+        {
+            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+            byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Name, userId.ToString())
+                    }),
+                Issuer = "OpenResumeAPI",
+                Audience = "OpenResumeAPI",
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        public bool EmailConfirm(string email, string token)
+        {
+            bool result = false;
+            User user = repository.FindByEmail(email);
+            if(user != null && user.ConfirmationToken.Equals(token))
+            {
+                user.EmailConfirmed = true;
+                user.ConfirmationToken = "";
+                user.UpdatedDate = DateTime.Now;
+                repository.Update(user);
+                result = true;
+            }
+            return result;
+        }
+
+        public bool PasswordChange(int userId, string oldPassword, string newPassword)
+        {
+            bool result = false;
+            User user = repository.ByID(userId);
+            if (user != null && user.PasswordHash.Equals(oldPassword))
+            {
+                user.PasswordHash = newPassword;
+                user.UpdatedDate = DateTime.Now;
+                repository.Update(user);
+                result = true;
+            }
+            return result;
+        }
+
+        public override bool Update(User user)
+        {
+            bool result = false;
+            User currentUser = repository.ByID(user.Id);
+            if (currentUser != null)
+            {
+                currentUser.Name = user.Name;
+                currentUser.LastName = user.LastName;
+                currentUser.UpdatedDate = DateTime.Now;
+                repository.Update(user);
+                result = true;
+            }
+            return result;
+        }
+
+        public override User ByID(int id)
+        {
+            return ClearSecrets(base.ByID(id));            
+        }
+
+        private User ClearSecrets(User user)
+        {
+            user.PasswordHash = "";
+            user.ConfirmationToken = "";
+            user.ResetToken = "";
+            return user;
+        }
     }
 }

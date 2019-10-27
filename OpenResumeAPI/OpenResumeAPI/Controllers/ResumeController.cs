@@ -1,93 +1,174 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using OpenResumeAPI.Business.Interfaces;
+using OpenResumeAPI.Helpers.Interfaces;
+using OpenResumeAPI.Models;
 
 namespace OpenResumeAPI.Controllers
 {
-    public class ResumeController : Controller
+    /// <summary>
+    /// Resume controller
+    /// </summary>
+    [Route("api/[controller]")]
+    [Authorize]
+    public class ResumeController : ControllerBase
     {
-        // GET: Resume
-        public ActionResult Index()
+        private IResumeBusiness business;
+
+        public ResumeController(IResumeBusiness business,
+                                ILogger<ResumeController> logger,
+                                IIdentityValidator validator) : base(logger, validator)
         {
-            return View();
+            this.business = business;
         }
 
-        // GET: Resume/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Resume/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Resume/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        /// <summary>
+        /// Find Resume by User and Resume name (Anonymous)
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="resume"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("{user}/{resume}")]
+        public ActionResult<Resume> Find([FromRoute]string user, [FromRoute]string resume)
         {
             try
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction(nameof(Index));
+                Resume result = business.Find(user, resume);
+                if (result != null)                
+                    return Ok(result);                
+                else                
+                    return StatusCode((int)HttpStatusCode.NotFound, "RESUME_NOT_FOUNT");                
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_LIST_ERROR");
             }
         }
 
-        // GET: Resume/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Resume/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Resume/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Resume/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        /// <summary>
+        /// List resumes of an user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("{userId}")]
+        public ActionResult<List<Resume>> List([FromRoute]int userId)
         {
             try
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
+                if (validator.Validate(userId, Request.Headers["Authorization"]))
+                {
+                    return Ok(business.List(userId));
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_LIST_ERROR");
             }
         }
+
+        /// <summary>
+        /// Create an resume
+        /// </summary>
+        /// <param name="resume"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public ActionResult<Resume> Create([FromBody]Resume resume)
+        {
+            try
+            {
+                if (validator.Validate(resume.UserId, Request.Headers["Authorization"]))
+                {
+                    (HttpStatusCode, Resume) result = business.Create(resume);
+                    if (result.Item1 == HttpStatusCode.OK)
+                        return Ok(result.Item2);
+                    else if(result.Item1 == HttpStatusCode.InsufficientStorage)
+                        return StatusCode((int)HttpStatusCode.InsufficientStorage, "RESUME_LIMIT");
+                    else
+                        return StatusCode((int)HttpStatusCode.Conflict, "RESUME_DUPLICATED");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_CREATE_ERROR");
+            }
+        }
+
+        /// <summary>
+        /// Update an resume
+        /// </summary>
+        /// <param name="resume"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Update([FromBody]Resume resume)
+        {
+            try
+            {
+                if (validator.Validate(resume.UserId, Request.Headers["Authorization"]))
+                {
+                    HttpStatusCode result = business.UpdateResume(resume);
+                    if (result == HttpStatusCode.OK)
+                        return Ok();
+                    else if (result == HttpStatusCode.NotFound)
+                        return StatusCode((int)result, "RESUME_NOT_FOUND");
+                    else
+                        return StatusCode((int)result, "RESUME_DUPLICATED");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_UPDATE_ERROR");
+            }
+        }
+
+        /// <summary>
+        /// Delete an resume
+        /// </summary>
+        /// <param name="resume"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public ActionResult Delete([FromBody]Resume resume)
+        {
+            try
+            {
+                if (validator.Validate(resume.UserId, Request.Headers["Authorization"]))
+                {
+                    if (business.Delete(resume))
+                        return Ok();
+                    else
+                        return StatusCode((int)HttpStatusCode.NotFound, "RESUME_NOT_FOUND");
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_UPDATE_ERROR");
+            }
+        }
+
     }
 }

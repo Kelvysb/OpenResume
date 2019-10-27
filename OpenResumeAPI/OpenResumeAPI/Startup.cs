@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpenResumeAPI.Business;
 using OpenResumeAPI.Business.Interfaces;
 using OpenResumeAPI.Helpers;
+using OpenResumeAPI.Helpers.Interfaces;
 using OpenResumeAPI.Services;
 using OpenResumeAPI.Services.Interfaces;
 using Swashbuckle.AspNetCore.Swagger;
@@ -74,6 +75,8 @@ namespace OpenResumeAPI
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             //Services
+            services.AddSingleton<IIdentityValidator, IdentityValidator>();
+            services.AddSingleton<IAppSettings, AppSettings>();
             services.AddSingleton<IDataBaseFactory, DataBaseFactory>();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IResumeRepository, ResumeRepository>();

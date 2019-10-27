@@ -16,10 +16,8 @@ namespace OpenResumeAPI.Services
         {
             try
             {
-                List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
-                {
-                    new clsDataBaseParametes("EMAIL", email)
-                };
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("EMAIL", email);
 
                 return dataBase.fnExecute<User>($@"Select
                                                         {Columns()}
@@ -45,18 +43,31 @@ namespace OpenResumeAPI.Services
 
         public User FindByLogin(string login)
         {
-            List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+            try
             {
-                new clsDataBaseParametes("LOGIN", login)
-            };
-
-            return dataBase.fnExecute<User>($@"Select
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("LOGIN", login);
+                
+                return dataBase.fnExecute<User>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     login = @LOGIN", par)
-                            .FirstOrDefault();
+                                .FirstOrDefault();
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return null;
+                else
+                    throw new System.Exception($"Database Errror: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

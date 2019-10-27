@@ -15,39 +15,44 @@ namespace OpenResumeAPI.Business
             this.repository = repository;
         }
 
-        public List<Model> All()
+        public virtual List<Model> All()
         {
             return repository.All();
         }
 
-        public List<Model> ByDescription(string description)
+        public virtual List<Model> ByDescription(string description)
         {
             return repository.ByDescription(description);
         }
 
-        public Model ByID(int id)
+        public virtual Model ByID(int id)
         {
             return repository.ByID(id);
         }
 
-        public List<Model> ByName(string name)
+        public virtual List<Model> ByName(string name)
         {
             return repository.ByName(name);
         }
 
-        public int Insert(Model model)
+        public virtual int Insert(Model model)
         {
             return repository.Insert(model);
         }
 
-        public List<Model> Limit(int limit)
+        public virtual List<Model> Limit(int limit)
         {
             return repository.Limit(limit);
         }
 
-        public int Update(Model model)
+        public virtual bool Update(Model model)
         {
             return repository.Update(model);
+        }
+
+        public virtual bool Delete(Model model)
+        {
+            return repository.Delete(model);
         }
     }
 }

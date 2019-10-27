@@ -6,12 +6,17 @@ namespace OpenResumeAPI.Models
     [TableName("blocks")]
     public class Block : ModelBase
     {
+        public Block() : base()
+        {        
+            Fields = new List<Field>();
+        }
+
         public Block(int id,
+                     int userId,
+                     int resumeId,
                      string name,
                      string description,
                      int itemOrder,
-                     string userId,
-                     string resumeId,
                      string blockType,
                      string title,
                      string content,
@@ -26,20 +31,20 @@ namespace OpenResumeAPI.Models
         }
 
         [ColumnName("userId")]
-        public string UserId { get; private set; }
+        public int UserId { get; set; }
 
         [ColumnName("resumeId")]
-        public string ResumeId { get; private set; }
+        public int ResumeId { get; set; }
 
         [ColumnName("blockType")]
-        public string BlockType { get; private set; }
+        public string BlockType { get; set; }
 
         [ColumnName("title")]
-        public string Title { get; private set; }
+        public string Title { get; set; }
 
         [ColumnName("content")]
-        public string Content { get; private set; }
+        public string Content { get; set; }
 
-        public List<Field> Fields { get; private set; }
+        public List<Field> Fields { get; set; }
     }
 }

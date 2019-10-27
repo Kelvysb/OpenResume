@@ -11,6 +11,7 @@ namespace OpenResumeAPI.Services.Interfaces
         List<Model> ByName(string name);
         int Insert(Model model);
         List<Model> Limit(int limit);
-        int Update(Model model);
+        bool Update(Model model);
+        bool Delete(Model model);
     }
 }

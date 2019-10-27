@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenResumeAPI.Services
 {
@@ -26,91 +24,212 @@ namespace OpenResumeAPI.Services
                 throw new Exception($"Invalid Model {typeof(Model).Name}, must have TableName attribute.");
         }
 
-        public List<Model> All()
+        public virtual List<Model> All()
         {
-            return dataBase.fnExecute<Model>($@"Select 
-                                                    {Columns()}
-                                                from 
-                                                    {tableName}");
-        }
-
-        public List<Model> Limit(int limit)
-        {
-            return dataBase.fnExecute<Model>($@"Select top {limit}
-                                                    {Columns()}
-                                                from 
-                                                    {tableName}");
-        }
-
-        public Model ByID(int Id)
-        {
-            List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+            try
             {
-                new clsDataBaseParametes("ID", Id.ToString())
-            };
 
-            return dataBase.fnExecute<Model>($@"Select
+                return dataBase.fnExecute<Model>($@"Select 
+                                                    {Columns()}
+                                                from 
+                                                    {tableName}");
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return new List<Model>();
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        public virtual List<Model> Limit(int limit)
+        {
+            try
+            {
+                return dataBase.fnExecute<Model>($@"Select top {limit}
+                                                    {Columns()}
+                                                from 
+                                                    {tableName}");
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return new List<Model>();
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        public virtual Model ByID(int Id)
+        {         
+            try
+            {
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("ID", Id);
+
+                return dataBase.fnExecute<Model>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     id = @ID", par)
-                            .FirstOrDefault();
+                                .FirstOrDefault();
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return null;
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
 
-        public List<Model> ByName(string name)
-        {
-            List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+        public virtual List<Model> ByName(string name)
+        {          
+            try
             {
-                new clsDataBaseParametes("NAME", name)
-            };
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("NAME", name);
 
-            return dataBase.fnExecute<Model>($@"Select
+                return dataBase.fnExecute<Model>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     name = @NAME", par);
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return new List<Model>();
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
 
-        public List<Model> ByDescription(string description)
-        {
-            List<clsDataBaseParametes> par = new List<clsDataBaseParametes>()
+        public virtual List<Model> ByDescription(string description)
+        {         
+            try
             {
-                new clsDataBaseParametes("DESCRIPTION", description)
-            };
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("DESCRIPTION", description);
 
-            return dataBase.fnExecute<Model>($@"Select
+                return dataBase.fnExecute<Model>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     description like @DESCRIPTION", par);
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return new List<Model>();
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
         }
 
-        public int Insert(Model model)
+        public virtual int Insert(Model model)
         {
-            return dataBase.fnExecute<int>($@"insert into {tableName} (
+            try
+            {
+                return dataBase.fnExecute<int>($@"insert into {tableName} (
                                                     {Columns()}
                                                 ) output inserted.id 
                                                 values (
                                                      {ColumnsParametersForInsert()}
                                                 )", Parameters(model))
                             .FirstOrDefault();
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.Duplicated)
+                    return 0;
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }           
         }
 
-        public int Update(Model model)
+        public virtual bool Update(Model model)
         {
-            return dataBase.fnExecute<int>($@"update {tableName} SET
+            try
+            {
+                return dataBase.fnExecute<int>($@"update {tableName} SET
                                                     {ColumnsParametersForUpdate()}
                                                     output inserted.id 
                                                 where
                                                     id = @ID
-                                                )", Parameters(model))
-                            .FirstOrDefault();
+                                                ", Parameters(model))
+                          .Any();
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return false;
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
+          
         }
 
-        protected string Columns()
+        public virtual bool Delete(Model model)
+        {
+            try
+            {
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("ID", model.Id);
+                return dataBase.fnExecute<int>($@"delete from {tableName}                                                    
+                                                    output deleted.id 
+                                                where
+                                                    id = @ID
+                                                ", par)
+                               .Any();
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    return false;
+                else
+                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }          
+        }
+
+        protected virtual string Columns()
         {
             List<string> result = typeof(Model).GetProperties()
                             .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null)
@@ -120,7 +239,7 @@ namespace OpenResumeAPI.Services
             return $"{String.Join(",\r\n", result)} \r\n";
         }
 
-        protected string ColumnsParametersForUpdate()
+        protected virtual string ColumnsParametersForUpdate()
         {
             List<string> result = typeof(Model).GetProperties()
                             .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null
@@ -131,7 +250,7 @@ namespace OpenResumeAPI.Services
             return $"{String.Join(",\r\n", result)} \r\n";
         }
 
-        protected string ColumnsParametersForInsert()
+        protected virtual string ColumnsParametersForInsert()
         {
             List<string> result = typeof(Model).GetProperties()
                             .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null
@@ -142,22 +261,23 @@ namespace OpenResumeAPI.Services
             return $"{String.Join(",\r\n", result)} \r\n";
         }
 
-        protected List<clsDataBaseParametes> Parameters(Model values)
+        protected virtual Dictionary<string, object> Parameters(Model values)
         {
-            return typeof(Model).GetProperties()
+            return new Dictionary<string, object>(
+                                typeof(Model).GetProperties()
                                 .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null)
                                 .Select(prop => ((ColumnName)prop.GetCustomAttribute(typeof(ColumnName), true)).Name)
-                                .Select(name => new clsDataBaseParametes(name.ToUpper(), PropertyValue(values, name)))
-                                .ToList();
+                                .Select(name => new KeyValuePair<string, object>(name.ToUpper(), PropertyValue(values, name))));
         }
 
-        private string PropertyValue(Model values, string columnName)
+        private object PropertyValue(Model values, string columnName)
         {
             return values.GetType().GetProperties()
                     .Where(prop => prop.GetCustomAttribute(typeof(ColumnName), true) != null
                         && ((ColumnName)prop.GetCustomAttribute(typeof(ColumnName), true)).Name.Equals(columnName, StringComparison.InvariantCultureIgnoreCase))
-                    .Select(prop => prop.GetValue(values).ToString())
+                    .Select(prop => prop.GetValue(values))
                     .FirstOrDefault();
         }
+
     }
 }
