@@ -1,0 +1,9 @@
+{
+    "SIGN_IN": "Sign In",
+    "SIGN_OUT": "Sign Out",
+    "JOIN": "Join",        
+    "LOGIN": {
+        "FORGET": "Forget password?",        
+        "CONFIRMATION": "Please confirm your e-mail address by the link sended."        
+    }    
+}
