@@ -6,5 +6,7 @@ namespace OpenResumeAPI.Services.Interfaces
     {
         User FindByEmail(string email);
         User FindByLogin(string login);
+        User FindByConfirmation(string token);
+        User FindByReset(string token);
     }
 }

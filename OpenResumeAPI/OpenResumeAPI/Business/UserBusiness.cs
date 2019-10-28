@@ -59,16 +59,46 @@ namespace OpenResumeAPI.Business
             return tokenHandler.WriteToken(token);
         }
 
-        public bool EmailConfirm(string email, string token)
+        public bool EmailConfirm(string token)
         {
             bool result = false;
-            User user = repository.FindByEmail(email);
-            if (user != null && user.ConfirmationToken.Equals(token))
+            User user = repository.FindByConfirmation(token);
+            if (user != null && !user.EmailConfirmed)
             {
                 user.EmailConfirmed = true;
                 user.ConfirmationToken = "";
                 user.UpdatedDate = DateTime.Now;
                 repository.Update(user);
+                result = true;
+            }
+            return result;
+        }
+
+        public User PasswordReset(string token)
+        {
+            User result = null;
+            User user = repository.FindByReset(token);
+            if (user != null && user.ResetPassword)
+            {
+                user.ResetPassword = false;
+                user.ResetToken = "";
+                user.UpdatedDate = DateTime.Now;
+                repository.Update(user);
+                result = Login(user);
+            }
+            return result;
+        }
+
+        public bool ForgetPassword(string email)
+        {
+            bool result = false;
+            User user = repository.FindByEmail(email);
+            if (user != null)
+            {
+                user.ResetPassword = true;
+                user.ResetToken = emailHelper.CreateToken(user);
+                repository.Update(user);
+                emailHelper.SendResetEmail(user);
                 result = true;
             }
             return result;
@@ -108,16 +138,23 @@ namespace OpenResumeAPI.Business
             return ClearSecrets(base.ByID(id));
         }
 
-        public bool Create(User user)
+        public HttpStatusCode Create(User user)
         {
-            bool result = false;
+            HttpStatusCode result = HttpStatusCode.Conflict ;
             if (repository.FindByLogin(user.Login) == null)
             {
-                user.EmailConfirmed = false;
-                user.ConfirmationToken = emailHelper.CreateToken(user);
-                user.Id = repository.Insert(user);
-                emailHelper.SendEmail(user);
-                result = true;
+                if(repository.FindByEmail(user.Email) == null)
+                {
+                    user.EmailConfirmed = false;
+                    user.ConfirmationToken = emailHelper.CreateToken(user);
+                    user.Id = repository.Insert(user);
+                    emailHelper.SendConfirmationEmail(user);
+                    result = HttpStatusCode.OK;
+                }
+                else
+                {
+                    result = HttpStatusCode.Ambiguous;
+                }
             }
             return result;
         }

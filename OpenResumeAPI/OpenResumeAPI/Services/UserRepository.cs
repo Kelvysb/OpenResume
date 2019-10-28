@@ -12,6 +12,64 @@ namespace OpenResumeAPI.Services
     {
         public UserRepository(IDataBaseFactory dataBaseFactory) : base(dataBaseFactory) { }
 
+        public User FindByConfirmation(string token)
+        {
+            try
+            {
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("CONFIRMATION", token);
+
+                return dataBase.fnExecute<User>($@"Select
+                                                        {Columns()}
+                                                    from 
+                                                        {tableName}
+                                                    where
+                                                        confirmationToken = @CONFIRMATION", par)
+                                .FirstOrDefault();
+
+            }
+            catch (DataBaseException dbex)
+            {
+                if (dbex.Code == enmDataBaseExeptionCode.NotExists)
+                    return null;
+                else
+                    throw new Exception($"{dbex.Code} - {dbex.Message}");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public User FindByReset(string token)
+        {
+            try
+            {
+                Dictionary<string, object> par = new Dictionary<string, object>();
+                par.Add("RESET", token);
+
+                return dataBase.fnExecute<User>($@"Select
+                                                        {Columns()}
+                                                    from 
+                                                        {tableName}
+                                                    where
+                                                        resetToken = @RESET", par)
+                                .FirstOrDefault();
+
+            }
+            catch (DataBaseException dbex)
+            {
+                if (dbex.Code == enmDataBaseExeptionCode.NotExists)
+                    return null;
+                else
+                    throw new Exception($"{dbex.Code} - {dbex.Message}");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public User FindByEmail(string email)
         {
             try

@@ -30,7 +30,47 @@ namespace OpenResumeAPI.Helpers
             return result.ToString();
         }
 
-        public void SendEmail(User user)
+        public void SendConfirmationEmail(User user)
+        {          
+            BodyBuilder bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = $@"<p>Please confirm your email cliking o the link below:</p>
+                                      <br/>
+                                      <a href='{appSettings.Home}emailconfirm.html?token={user.ConfirmationToken}'>Confirm</a>                                      
+                                      <br/>
+                                      <p>This link will be available for 24 hours.</p>
+                                      <br/>
+                                     <a href='{appSettings.Home}'>Open-Resume</a>";
+            bodyBuilder.TextBody = $@"Please confirm your email cliking o the link below:
+
+                                     {appSettings.Home}emailconfirm.html?token={user.ConfirmationToken}
+                                     This link will be available for 24 hours.
+
+                                     {appSettings.Home}";
+
+            SendEmail(bodyBuilder, user);          
+        }        
+
+        public void SendResetEmail(User user)
+        {
+            BodyBuilder bodyBuilder = new BodyBuilder();
+            bodyBuilder.HtmlBody = $@"<p>Please reset your password cliking o the link below:</p>
+                                      <br/>
+                                      <a href='{appSettings.Home}passwordreset.html?token={user.ResetToken}'>Confirm</a>                                      
+                                      <br/>
+                                      <p>If you don't request this, please ignore.</p>
+                                      <br/>
+                                     <a href='{appSettings.Home}'>Open-Resume</a>";
+            bodyBuilder.TextBody = $@"Please reset your password cliking o the link below:
+
+                                     {appSettings.Home}passwordreset.html?token={user.ResetToken}
+                                     If you don't request this, please ignore.
+
+                                     {appSettings.Home}";
+
+            SendEmail(bodyBuilder, user);
+        }
+
+        private void SendEmail(BodyBuilder body, User user)
         {
             MimeMessage message = new MimeMessage();
             MailboxAddress from = new MailboxAddress(appSettings.From, appSettings.Email);
@@ -38,21 +78,7 @@ namespace OpenResumeAPI.Helpers
             MailboxAddress to = new MailboxAddress(user.Name, user.Email);
             message.To.Add(to);
             message.Subject = appSettings.Subject;
-
-            BodyBuilder bodyBuilder = new BodyBuilder();
-            bodyBuilder.HtmlBody = $@"<p>Please confirm your email cliking o the link below:</p>
-                                      <br/><br/>
-                                      <a href='{appSettings.Home}emailconfirm.html?email={user.Email}&token={user.ConfirmationToken}'>Confirm</a>                                      
-                                      <br/><br/>
-                                     <a href='{appSettings.Home}'>Open-Resume</a>";
-            bodyBuilder.TextBody = $@"Please confirm your email cliking o the link below:
-
-                                     {appSettings.Home}emailconfirm.html?email={user.Email}&token={user.ConfirmationToken}
-
-                                     {appSettings.Home}";
-
-            message.Body = bodyBuilder.ToMessageBody();
-
+            message.Body = body.ToMessageBody();
             SmtpClient client = new SmtpClient();
             client.Connect(appSettings.EmailServer, appSettings.EmailPort, false);
             client.Authenticate(appSettings.EmailUser, appSettings.EmailPassword);
@@ -60,5 +86,6 @@ namespace OpenResumeAPI.Helpers
             client.Disconnect(true);
             client.Dispose();
         }
+
     }
 }

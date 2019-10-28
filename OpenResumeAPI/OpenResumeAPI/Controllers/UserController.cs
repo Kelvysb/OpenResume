@@ -54,19 +54,63 @@ namespace OpenResumeAPI.Controllers
         /// <summary>
         /// Emaiol confirmation
         /// </summary>
-        /// <param name="email">Email</param>
         /// <param name="token">Token</param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("emailconfirm")]
-        public ActionResult EmailConfirm([FromQuery]string email, [FromQuery]string token)
+        public ActionResult EmailConfirm([FromQuery]string token)
         {
             try
             {
-                if (business.EmailConfirm(email, token))
+                if (business.EmailConfirm(token))
                     return Ok();
                 else
                     return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_CONFIRMATION_TOKEN");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode(500, "LOGIN_ERROR");
+            }
+        }
+
+        /// <summary>
+        /// Password Reset
+        /// </summary>
+        /// <param name="token">Token</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("passwordreset")]
+        public ActionResult<User> PasswordReset([FromQuery]string token)
+        {
+            try
+            {
+                User result = business.PasswordReset(token);
+                if (result != null)
+                    return Ok(result);
+                else
+                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_RESET_TOKEN");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                return StatusCode(500, "LOGIN_ERROR");
+            }
+        }
+
+        /// <summary>
+        /// Forget Password
+        /// </summary>
+        /// <param name="email">Token</param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("forgetpassword")]
+        public ActionResult ForgetPassword([FromQuery]string email)
+        {
+            try
+            {
+                business.ForgetPassword(email);
+                return Ok();                
             }
             catch (Exception ex)
             {
@@ -147,10 +191,13 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (business.Create(user))
+                HttpStatusCode result = business.Create(user);
+                if (result == HttpStatusCode.OK)
                     return Ok();               
+                else if (result == HttpStatusCode.Conflict)
+                    return StatusCode((int)result, "USER_DUPLICATED");
                 else
-                    return StatusCode((int)HttpStatusCode.Conflict, "USER_DUPLICATED");
+                    return StatusCode((int)HttpStatusCode.Ambiguous, "EMAIL_DUPLICATED");
             }
             catch (Exception ex)
             {

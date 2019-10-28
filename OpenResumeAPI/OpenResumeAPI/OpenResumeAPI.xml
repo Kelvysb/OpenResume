@@ -57,12 +57,25 @@
             <param name="user">user</param>
             <returns></returns>
         </member>
-        <member name="M:OpenResumeAPI.Controllers.UserController.EmailConfirm(System.String,System.String)">
+        <member name="M:OpenResumeAPI.Controllers.UserController.EmailConfirm(System.String)">
             <summary>
             Emaiol confirmation
             </summary>
-            <param name="email">Email</param>
             <param name="token">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.PasswordReset(System.String)">
+            <summary>
+            Password Reset
+            </summary>
+            <param name="token">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.ForgetPassword(System.String)">
+            <summary>
+            Forget Password
+            </summary>
+            <param name="email">Token</param>
             <returns></returns>
         </member>
         <member name="M:OpenResumeAPI.Controllers.UserController.PasswordChange(System.Int32,System.String,System.String)">
