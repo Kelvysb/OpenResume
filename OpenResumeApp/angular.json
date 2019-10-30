@@ -94,7 +94,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hom.ts"
+                  "with": "src/environments/environment.homolog.ts"
                 }
               ],
               "optimization": true,

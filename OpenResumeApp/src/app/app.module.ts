@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { ROUTES } from './app.routes';
 import { AppRoutingModule } from './app-routing.module';
@@ -8,6 +9,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClientModule, HttpClient} from '@angular/common/http';
 import { RouterModule, PreloadAllModules } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './user/login/login.component';
 import { ChangePasswordComponent } from './user/change-password/change-password.component';
@@ -35,6 +37,7 @@ import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user/user.component';
 import { InputContainerComponent } from './shared/input-container/input-container.component';
 import { UserService } from './user/user.service';
+import { NotifyService } from './shared/notify.service';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -74,10 +77,13 @@ export function HttpLoaderFactory(http: HttpClient) {
   imports: [
     UserService,
     BrowserModule,
+    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
+    MatSnackBarModule,
+    NotifyService,
     RouterModule.forRoot(ROUTES, {preloadingStrategy: PreloadAllModules}),
     TranslateModule.forRoot({
       loader: {

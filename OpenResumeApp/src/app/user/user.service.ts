@@ -16,7 +16,7 @@ export class UserService {
               'Content-Type':  'application/json'
             })
         };
-        return this.http.post<User>(`${environment.api}/login`, user, httpOptions)
+        return this.http.post<User>(`${environment.api}/user/login`, user, httpOptions)
             .pipe();
     }
 }
