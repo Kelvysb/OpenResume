@@ -7,6 +7,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClientModule, HttpClient} from '@angular/common/http';
 import { RouterModule, PreloadAllModules } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './user/login/login.component';
 import { ChangePasswordComponent } from './user/change-password/change-password.component';
@@ -30,6 +31,9 @@ import { SkillsLanguagesEditComponent } from './resume/templates/euro/skills-lan
 import { SkillsAdditionalComponent } from './resume/templates/euro/skills-additional/skills-additional.component';
 import { SkillsAdditionalEditComponent } from './resume/templates/euro/skills-additional-edit/skills-additional-edit.component';
 import { ResumeHeaderComponent } from './resume/templates/euro/resume-header/resume-header.component';
+import { HomeComponent } from './home/home.component';
+import { UserComponent } from './user/user/user.component';
+import { InputContainerComponent } from './shared/input-container/input-container.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -61,10 +65,15 @@ export function HttpLoaderFactory(http: HttpClient) {
     SkillsLanguagesEditComponent,
     SkillsAdditionalComponent,
     SkillsAdditionalEditComponent,
-    ResumeHeaderComponent
+    ResumeHeaderComponent,
+    HomeComponent,
+    UserComponent,
+    InputContainerComponent
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
     RouterModule.forRoot(ROUTES, {preloadingStrategy: PreloadAllModules}),

@@ -1,0 +1,7 @@
+<div class="form-group has-success" [class.has-success]="hasSuccess()"
+                                    [class.has-error]="hasError()">
+  <label>{{label}}</label>
+  <ng-content></ng-content>    
+  <span *ngIf="hasSuccess()" class="help-block"><i class="fa fa-check"></i>{{'OK' | translate}}</span>
+  <span *ngIf="hasError()" class="help-block"><i class="fa fa-remove"></i>{{errorMessage}}</span>
+</div>

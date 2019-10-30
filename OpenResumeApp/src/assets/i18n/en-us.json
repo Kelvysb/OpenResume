@@ -1,9 +1,19 @@
 {
-    "SIGN_IN": "Sign In",
+    "SIGN_IN": "Login",
     "SIGN_OUT": "Sign Out",
-    "JOIN": "Join",        
+    "REGISTER": "Register",
+    "OK": "Ok",
     "LOGIN": {
+        "TITLE": "Login",
+        "EMAIL": "E-mail",
+        "PASSWORD": "Password",
         "FORGET": "Forget password?",        
-        "CONFIRMATION": "Please confirm your e-mail address by the link sended."        
-    }    
+        "CONFIRMATION": "Please confirm your e-mail address by the link sended.",
+        "ERRORS": {
+            "INVALID_EMAIL": "Invalid e-mail."
+        }        
+    },    
+    "ERRORS": {
+        "REQUIRED": "Required field."
+    }
 }

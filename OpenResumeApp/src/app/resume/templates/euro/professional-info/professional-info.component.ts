@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'openr-professional-info',
@@ -7,7 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfessionalInfoComponent implements OnInit {
 
-  constructor() { }
+  constructor(translate: TranslateService) {
+    translate.setDefaultLang('en-us');
+    translate.use('en-us');
+  }
 
   ngOnInit() {
   }

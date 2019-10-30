@@ -1,0 +1,4 @@
+2019-10-29T16:27:44.5741527-03:00 0HLQSKO92QOO6:00000001 [INF] Request starting HTTP/1.1 GET http://localhost:5000/index.html   (ca22a1cb)
+2019-10-29T16:27:45.4128287-03:00 0HLQSKO92QOO6:00000001 [INF] Request finished in 841.9682ms 200 text/html (791a596a)
+2019-10-29T16:27:46.3783929-03:00 0HLQSKO92QOO6:00000002 [INF] Request starting HTTP/1.1 GET http://localhost:5000/swagger/v1/swagger.json   (ca22a1cb)
+2019-10-29T16:27:46.8031928-03:00 0HLQSKO92QOO6:00000002 [INF] Request finished in 424.1308ms 200 application/json;charset=utf-8 (791a596a)
