@@ -34,6 +34,7 @@ import { ResumeHeaderComponent } from './resume/templates/euro/resume-header/res
 import { HomeComponent } from './home/home.component';
 import { UserComponent } from './user/user/user.component';
 import { InputContainerComponent } from './shared/input-container/input-container.component';
+import { UserService } from './user/user.service';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -71,6 +72,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     InputContainerComponent
   ],
   imports: [
+    UserService,
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,

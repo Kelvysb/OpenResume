@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
+import {Md5} from 'ts-md5/dist/md5';
 
 @Component({
   selector: 'openr-login',
@@ -23,12 +24,13 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  login() {
+  login() { 
     const user: User = {
       Email: this.loginForm.controls.email.value,
-      PasswordHash: this.loginForm.controls.password.value
-    };
+      PasswordHash: Md5.hashStr(this.loginForm.controls.password.value) as string
+      };
 
+      console.log(user.PasswordHash);
   }
 
 }

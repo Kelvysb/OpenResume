@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenResumeAPI</name>
+    </assembly>
+    <members>
+        <member name="T:OpenResumeAPI.Controllers.ResumeController">
+            <summary>
+            Resume controller
+            </summary>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.ResumeController.Find(System.String,System.String)">
+            <summary>
+            Find Resume by User and Resume name (Anonymous)
+            </summary>
+            <param name="user"></param>
+            <param name="resume"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.ResumeController.List(System.Int32)">
+            <summary>
+            List resumes of an user
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.ResumeController.Create(OpenResumeAPI.Models.Resume)">
+            <summary>
+            Create an resume
+            </summary>
+            <param name="resume"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.ResumeController.Update(OpenResumeAPI.Models.Resume)">
+            <summary>
+            Update an resume
+            </summary>
+            <param name="resume"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.ResumeController.Delete(OpenResumeAPI.Models.Resume)">
+            <summary>
+            Delete an resume
+            </summary>
+            <param name="resume"></param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenResumeAPI.Controllers.UserController">
+            <summary>
+            User controller
+            </summary>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.Login(OpenResumeAPI.Models.User)">
+            <summary>
+            Execute the user login
+            </summary>
+            <param name="user">user</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.EmailConfirm(System.String)">
+            <summary>
+            Emaiol confirmation
+            </summary>
+            <param name="token">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.PasswordReset(System.String)">
+            <summary>
+            Password Reset
+            </summary>
+            <param name="token">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.ForgetPassword(System.String)">
+            <summary>
+            Forget Password
+            </summary>
+            <param name="email">Token</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.PasswordChange(System.Int32,System.String,System.String)">
+            <summary>
+            Change Password
+            </summary>
+            <param name="userId"></param>
+            <param name="oldPassword"></param>
+            <param name="newPassword"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.Find(System.Int32)">
+            <summary>
+            Get user data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.Create(OpenResumeAPI.Models.User)">
+            <summary>
+            Create user
+            </summary>
+            <param name="user">user</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.Update(OpenResumeAPI.Models.User)">
+            <summary>
+            Update user information
+            </summary>
+            <param name="user">user</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenResumeAPI.Controllers.UserController.Delete(OpenResumeAPI.Models.User)">
+            <summary>
+            Delete user
+            </summary>
+            <param name="user">user</param>
+            <returns></returns>
+        </member>
+        <member name="T:OpenResumeAPI.Services.DataBaseFactory">
+            <summary>
+            Data base factory class
+            </summary>
+        </member>
+        <member name="M:OpenResumeAPI.Services.DataBaseFactory.#ctor(Microsoft.Extensions.Options.IOptions{OpenResumeAPI.Helpers.AppSettings})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="appSettings"></param>
+        </member>
+        <member name="M:OpenResumeAPI.Services.DataBaseFactory.Build">
+            <summary>
+            Build the database connection.
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

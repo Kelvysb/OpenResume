@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgModule } from '@angular/core';
 import { HttpClient, HttpHeaders  } from '@angular/common/http';
 import { User } from './user.model';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, pipe } from 'rxjs';
 
 @Injectable()
+@NgModule()
 export class UserService {
     constructor(private http: HttpClient) {}
 

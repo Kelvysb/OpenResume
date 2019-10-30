@@ -1,21 +1,20 @@
-export class User {
-    constructor(public Id: number,
-                public Name: string,
-                public Description: string,
-                public ItemOrder: number,
-                public Login: string,
-                public Email: string,
-                public LastName: string,
-                public PasswordHash: string,
-                public EmailConfirmed: boolean,
-                public ResetPassword: boolean,
-                public ResetToken: string,
-                public ConfirmationToken: string,
-                public CreatedDate: Date,
-                public UpdatedDate: Date,
-                public LastActivity: Date,
-                public Token: string
-    ) { }
+export interface User {
+    Id?: number;
+    Name?: string;
+    Description?: string;
+    ItemOrder?: number;
+    Login?: string;
+    Email?: string;
+    LastName?: string;
+    PasswordHash?: string;
+    EmailConfirmed?: boolean;
+    ResetPassword?: boolean;
+    ResetToken?: string;
+    ConfirmationToken?: string;
+    CreatedDate?: Date;
+    UpdatedDate?: Date;
+    LastActivity?: Date;
+    Token?: string;
 }
 
 
