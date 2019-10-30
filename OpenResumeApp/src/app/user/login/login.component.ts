@@ -20,7 +20,6 @@ export class LoginComponent implements OnInit {
               private notifyService: NotifyService) { }
 
   ngOnInit() {
-    this.notifyService.notify('teste', '', 3000);
     this.loginForm = this.formBuilder.group({
       email: this.formBuilder.control('', [Validators.required, Validators.pattern(this.emailPattern)]),
       password: this.formBuilder.control('', [Validators.required])
