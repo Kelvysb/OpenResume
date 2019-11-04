@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
 import {Md5} from 'ts-md5/dist/md5';
-import { NotifyService } from 'src/app/shared/notify.service';
 import { MessageComponent } from 'src/app/shared/message/message.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ngx-cookie-service';
@@ -56,7 +55,7 @@ export class LoginComponent implements OnInit {
   }
 
   ExecuteLogin(user: User) {
-    this.cookieService.set('User', JSON.stringify(user));
+    this.cookieService.set('User', JSON.stringify(user), 1);
     this.router.navigateByUrl('/user');
   }
 
