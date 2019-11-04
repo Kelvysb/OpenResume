@@ -38,7 +38,8 @@ import { UserComponent } from './user/user/user.component';
 import { InputContainerComponent } from './shared/input-container/input-container.component';
 import { UserService } from './user/user.service';
 import { NotifyService } from './shared/notify.service';
-
+import { MessageComponent } from './shared/message/message.component';
+import { CookieService } from 'ngx-cookie-service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -72,7 +73,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     ResumeHeaderComponent,
     HomeComponent,
     UserComponent,
-    InputContainerComponent
+    InputContainerComponent,
+    MessageComponent
   ],
   imports: [
     UserService,
@@ -93,7 +95,7 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
   })
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

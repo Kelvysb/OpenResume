@@ -1,0 +1,5 @@
+<div class="row" *ngIf="ShowMessage">
+    <div class="col-12">
+        <p id="Message" [class.ErrorMessage]="Error" [class.OkMessage]="!Error">{{Message}}</p>
+    </div>
+</div>

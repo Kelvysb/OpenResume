@@ -10,7 +10,8 @@
         "FORGET": "Forget password?",        
         "CONFIRMATION": "Please confirm your e-mail address by the link sended.",
         "ERRORS": {
-            "INVALID_EMAIL": "Invalid e-mail."
+            "INVALID_EMAIL": "Invalid e-mail.",
+            "INVALID_LOGIN": "Invalid E-mail or Password."
         }        
     },    
     "ERRORS": {
