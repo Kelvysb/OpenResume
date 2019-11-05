@@ -14,14 +14,16 @@ export class UserComponent implements OnInit {
 
   constructor(private userService: UserService,
               private translate: TranslateService,
-              private cookieService: CookieService,
-              private router: Router) { }
+              private router: Router) {
+    this.translate.setDefaultLang('en-us');
+    this.translate.use('en-us');
+  }
 
   user: User;
 
   ngOnInit() {
-    if (this.cookieService.check('User')) {
-      this.user = JSON.parse(this.cookieService.get('User'));
+    if (this.userService.IsUserLogged()) {
+      this.user = this.userService.LoggedUser();
     } else {
       this.router.navigateByUrl('/login');
     }

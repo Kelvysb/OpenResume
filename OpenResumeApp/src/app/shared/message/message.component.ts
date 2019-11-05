@@ -8,40 +8,34 @@ import { ThrowStmt } from '@angular/compiler';
 })
 export class MessageComponent implements OnInit {
 
-  @Input() Message: string = "";
-  @Input() Error: boolean = true;
-  @Input() Timeout: number = 3000;
-  ShowMessage: boolean = false;
+  @Input() Message = '';
+  @Input() Error = true;
+  @Input() Timeout = 3000;
+  ShowMessage = false;
 
   constructor() { }
 
   ngOnInit() {
   }
 
-  Show (message: string, error: boolean, timeout?: number)
-  {
+  Show(message: string, error: boolean, timeout?: number) {
     this.Message = message;
     this.Error = error;
-    if(timeout !== undefined)
-    {
+    if (timeout !== undefined) {
       this.Timeout = timeout;
-    }
-    else 
-    {
+    } else {
       this.Timeout = 3000;
     }
 
     this.ShowMessage = true;
 
-    if(this.Timeout != 0)
-    {
+    if (this.Timeout !== 0) {
       setTimeout(() => { this.Hide(); }, this.Timeout);
     }
 
   }
 
-  Hide() 
-  {
+  Hide() {
     this.ShowMessage = false;
   }
 

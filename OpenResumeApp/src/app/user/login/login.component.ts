@@ -7,6 +7,7 @@ import { MessageComponent } from 'src/app/shared/message/message.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { HeaderComponent } from 'src/app/header/header.component';
 
 @Component({
   selector: 'openr-login',
@@ -40,8 +41,8 @@ export class LoginComponent implements OnInit {
 
   login() {
     const user: User = {
-        Email: this.loginForm.controls.email.value,
-        PasswordHash: Md5.hashStr(this.loginForm.controls.password.value) as string
+        email: this.loginForm.controls.email.value,
+        passwordHash: Md5.hashStr(this.loginForm.controls.password.value) as string
       };
 
     this.userService.login(user).subscribe((result: User) => {
@@ -55,7 +56,7 @@ export class LoginComponent implements OnInit {
   }
 
   ExecuteLogin(user: User) {
-    this.cookieService.set('User', JSON.stringify(user), 1);
+    this.userService.SetLoggegUser(user);
     this.router.navigateByUrl('/user');
   }
 
