@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Principal;
+using System;
 
 namespace OpenResumeAPI.Helpers
 {
@@ -17,7 +18,7 @@ namespace OpenResumeAPI.Helpers
             this.appSettings = appSettings;
         }
 
-        public bool Validate(int userId, string token)
+        public void Validate(int userId, string token)
         {
             bool result = false;
             string cleanToken = token.Replace("Bearer ", "");
@@ -32,7 +33,8 @@ namespace OpenResumeAPI.Helpers
                                         .FirstOrDefault()
                                         .Value.Equals(userId.ToString());
             }
-            return result;
+            if (!result)
+                throw new UnauthorizedAccessException();
         }
 
         private TokenValidationParameters ValidationSettings()

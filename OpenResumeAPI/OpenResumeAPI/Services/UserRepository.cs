@@ -1,4 +1,5 @@
 ﻿using BDataBaseStandard;
+using OpenResumeAPI.Exceptions;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
 using System;
@@ -16,22 +17,12 @@ namespace OpenResumeAPI.Services
         {
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("CONFIRMATION", token);
-
-                return dataBase.fnExecute<User>($@"Select
-                                                        {Columns()}
-                                                    from 
-                                                        {tableName}
-                                                    where
-                                                        confirmationToken = @CONFIRMATION", par)
-                                .FirstOrDefault();
-
+                return ExecuteFindByConfirmation(token);
             }
             catch (DataBaseException dbex)
             {
                 if (dbex.Code == enmDataBaseExeptionCode.NotExists)
-                    return null;
+                    throw new NotFoundException<User>();
                 else
                     throw new Exception($"{dbex.Code} - {dbex.Message}");
             }
@@ -39,28 +30,32 @@ namespace OpenResumeAPI.Services
             {
                 throw;
             }
+        }
+
+        private User ExecuteFindByConfirmation(string token)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("CONFIRMATION", token);
+
+            return dataBase.fnExecute<User>($@"Select
+                                                        {Columns()}
+                                                    from 
+                                                        {tableName}
+                                                    where
+                                                        confirmationToken = @CONFIRMATION", par)
+                            .FirstOrDefault();
         }
 
         public User FindByReset(string token)
         {
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("RESET", token);
-
-                return dataBase.fnExecute<User>($@"Select
-                                                        {Columns()}
-                                                    from 
-                                                        {tableName}
-                                                    where
-                                                        resetToken = @RESET", par)
-                                .FirstOrDefault();
-
+                return ExecuteFindByReset(token);
             }
             catch (DataBaseException dbex)
             {
                 if (dbex.Code == enmDataBaseExeptionCode.NotExists)
-                    return null;
+                    throw new NotFoundException<User>();
                 else
                     throw new Exception($"{dbex.Code} - {dbex.Message}");
             }
@@ -68,28 +63,32 @@ namespace OpenResumeAPI.Services
             {
                 throw;
             }
+        }
+
+        private User ExecuteFindByReset(string token)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("RESET", token);
+
+            return dataBase.fnExecute<User>($@"Select
+                                                        {Columns()}
+                                                    from 
+                                                        {tableName}
+                                                    where
+                                                        resetToken = @RESET", par)
+                            .FirstOrDefault();
         }
 
         public User FindByEmail(string email)
         {
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("EMAIL", email);
-
-                return dataBase.fnExecute<User>($@"Select
-                                                        {Columns()}
-                                                    from 
-                                                        {tableName}
-                                                    where
-                                                        email = @EMAIL", par)
-                                .FirstOrDefault();
-
+                return ExecuteFindByEmail(email);
             }
-            catch(DataBaseException dbex)
+            catch (DataBaseException dbex)
             {
                 if (dbex.Code == enmDataBaseExeptionCode.NotExists)
-                    return null;
+                    throw new NotFoundException<User>();
                 else
                     throw new Exception($"{dbex.Code} - {dbex.Message}");
             }
@@ -99,25 +98,30 @@ namespace OpenResumeAPI.Services
             }
         }
 
+        private User ExecuteFindByEmail(string email)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("EMAIL", email);
+
+            return dataBase.fnExecute<User>($@"Select
+                                                        {Columns()}
+                                                    from 
+                                                        {tableName}
+                                                    where
+                                                        email = @EMAIL", par)
+                            .FirstOrDefault();
+        }
+
         public User FindByLogin(string login)
         {
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("LOGIN", login);
-                
-                return dataBase.fnExecute<User>($@"Select
-                                                    {Columns()}
-                                                from 
-                                                    {tableName}
-                                                where
-                                                    login = @LOGIN", par)
-                                .FirstOrDefault();
+                return ExecuteFindByLogin(login);
             }
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return null;
+                    throw new NotFoundException<User>();
                 else
                     throw new System.Exception($"Database Errror: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
@@ -126,6 +130,20 @@ namespace OpenResumeAPI.Services
                 throw;
             }
 
+        }
+
+        private User ExecuteFindByLogin(string login)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("LOGIN", login);
+
+            return dataBase.fnExecute<User>($@"Select
+                                                    {Columns()}
+                                                from 
+                                                    {tableName}
+                                                where
+                                                    login = @LOGIN", par)
+                            .FirstOrDefault();
         }
     }
 }

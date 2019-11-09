@@ -2,6 +2,6 @@
 {
     public interface IIdentityValidator
     {
-        bool Validate(int userId, string token);
+        void Validate(int userId, string token);
     }
 }

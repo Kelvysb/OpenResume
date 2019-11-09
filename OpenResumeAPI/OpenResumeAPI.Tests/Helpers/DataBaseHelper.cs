@@ -31,6 +31,24 @@ namespace OpenResumeAPI.Tests.Helpers
             return this;
         }
 
+        public DataBaseHelper AddNotFoundByValue<Model>(string key, object value) where Model : ModelBase
+        {
+            dataBase.Setup(repository => repository.fnExecute<Model>(It.IsAny<string>(), It.Is<Dictionary<string, object>>(item => item.ContainsKey(key) && item[key].Equals(value))))
+                .Throws(new DataBaseException(DataBaseException.enmDataBaseExeptionCode.NotExists, "Not Exists"));
+            dataBase.Setup(repository => repository.sbExecute(It.IsAny<string>(), It.Is<Dictionary<string, object>>(item => item.ContainsKey(key) && item[key].Equals(value))))
+                .Throws(new DataBaseException(DataBaseException.enmDataBaseExeptionCode.NotExists, "Not Exists"));
+            return this;
+        }
+
+        public DataBaseHelper AddDuplicatedByValue(string key, object value)
+        {
+            dataBase.Setup(repository => repository.sbExecute(It.IsAny<string>(), It.Is<Dictionary<string, object>>(item => item.ContainsKey(key) && item[key].Equals(value))))
+                .Throws(new DataBaseException(DataBaseException.enmDataBaseExeptionCode.Duplicated, "Duplicated"));
+            dataBase.Setup(repository => repository.fnExecute<int>(It.IsAny<string>(), It.Is<Dictionary<string, object>>(item => item.ContainsKey(key) && item[key].Equals(value))))
+                .Throws(new DataBaseException(DataBaseException.enmDataBaseExeptionCode.Duplicated, "Duplicated"));
+            return this;
+        }
+
         public IDataBaseFactory Build()
         {
             dataBaseFactory.Setup(factory => factory.Build()).Returns(dataBase.Object);

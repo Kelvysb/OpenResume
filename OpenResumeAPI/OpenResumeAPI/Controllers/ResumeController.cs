@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using OpenResumeAPI.Business.Interfaces;
+using OpenResumeAPI.Exceptions;
 using OpenResumeAPI.Helpers.Interfaces;
 using OpenResumeAPI.Models;
 
@@ -38,16 +39,16 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                Resume result = business.Find(user, resume);
-                if (result != null)                
-                    return Ok(result);                
-                else                
-                    return StatusCode((int)HttpStatusCode.NotFound, "RESUME_NOT_FOUNT");                
+                return Ok(business.Find(user, resume));
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound, "RESUME-NOT-FOUNT");
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_LIST_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME-LIST-ERROR");
             }
         }
 
@@ -61,19 +62,21 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(userId, Request.Headers["Authorization"]))
-                {
-                    return Ok(business.List(userId));
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.Validate(userId, Request.Headers["Authorization"]);
+                return Ok(business.List(userId));
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound, "RESUME-NOT-FOUNT");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_LIST_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME-LIST-ERROR");
             }
         }
 
@@ -87,25 +90,30 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(resume.UserId, Request.Headers["Authorization"]))
-                {
-                    (HttpStatusCode, Resume) result = business.Create(resume);
-                    if (result.Item1 == HttpStatusCode.OK)
-                        return Ok(result.Item2);
-                    else if(result.Item1 == HttpStatusCode.InsufficientStorage)
-                        return StatusCode((int)HttpStatusCode.InsufficientStorage, "RESUME_LIMIT");
-                    else
-                        return StatusCode((int)HttpStatusCode.Conflict, "RESUME_DUPLICATED");
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.Validate(resume.UserId, Request.Headers["Authorization"]);
+                Resume result = business.Create(resume);
+                return Ok(result);
+            }
+            catch (ResumeLimitException)
+            {
+                return StatusCode((int)HttpStatusCode.InsufficientStorage, "RESUME-LIMIT");
+            }
+            catch (DuplicatedException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.Conflict, "RESUME-DUPLICATED");
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound, "RESUME-NOT-FOUND");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_CREATE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME-CREATE-ERROR");
             }
         }
 
@@ -119,25 +127,26 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(resume.UserId, Request.Headers["Authorization"]))
-                {
-                    HttpStatusCode result = business.UpdateResume(resume);
-                    if (result == HttpStatusCode.OK)
-                        return Ok();
-                    else if (result == HttpStatusCode.NotFound)
-                        return StatusCode((int)result, "RESUME_NOT_FOUND");
-                    else
-                        return StatusCode((int)result, "RESUME_DUPLICATED");
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.Validate(resume.UserId, Request.Headers["Authorization"]);
+                business.UpdateResume(resume);
+                return Ok();
+            }
+            catch (DuplicatedException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.Conflict, "RESUME-DUPLICATED");
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound, "RESUME-NOT-FOUND");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_UPDATE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME-UPDATE-ERROR");
             }
         }
 
@@ -151,22 +160,22 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(resume.UserId, Request.Headers["Authorization"]))
-                {
-                    if (business.Delete(resume))
-                        return Ok();
-                    else
-                        return StatusCode((int)HttpStatusCode.NotFound, "RESUME_NOT_FOUND");
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.Validate(resume.UserId, Request.Headers["Authorization"]);
+                business.Delete(resume);
+                return Ok();
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return StatusCode((int)HttpStatusCode.NotFound, "RESUME-NOT-FOUND");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME_UPDATE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "RESUME-UPDATE-ERROR");
             }
         }
 

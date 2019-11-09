@@ -45,14 +45,14 @@ namespace OpenResumeAPI.Business
             return repository.Limit(limit);
         }
 
-        public virtual bool Update(Model model)
+        public virtual void Update(Model model)
         {
-            return repository.Update(model);
+            repository.Update(model);
         }
 
-        public virtual bool Delete(Model model)
+        public virtual void Delete(Model model)
         {
-            return repository.Delete(model);
+            repository.Delete(model);
         }
     }
 }

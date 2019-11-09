@@ -1,8 +1,8 @@
 ﻿using OpenResumeAPI.Business.Interfaces;
+using OpenResumeAPI.Exceptions;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
 using System.Collections.Generic;
-using System.Net;
 
 namespace OpenResumeAPI.Business
 {
@@ -19,31 +19,40 @@ namespace OpenResumeAPI.Business
             this.fieldBusiness = fieldBusiness;
         }
 
-        public (HttpStatusCode, Resume) Create(Resume resume)
+        public Resume Create(Resume resume)
         {
-            (HttpStatusCode, Resume) result = (HttpStatusCode.Conflict, null); 
-            if(repository.FindByUserIdAndName(resume.UserId, resume.Name) == null)
+            if (!CheckResume(resume.UserId, resume.Name))
             {
                 resume.Id = repository.Insert(resume);
-                if (resume.Id != 0)
-                {
-                    resume.Blocks.ForEach(block =>
-                    {
-                        block.UserId = resume.UserId;
-                        block.ResumeId = resume.Id;
-                        blockBusiness.Insert(block);
-                        block.Fields.ForEach(field =>
-                        {
-                            field.UserId = block.UserId;
-                            field.ResumeId = block.ResumeId;
-                            field.BlockId = block.Id;
-                            fieldBusiness.Insert(field);
-                        });
-                    });
-                    result = (HttpStatusCode.OK, resume);
-                }
+                CreateBlocks(resume);
             }
-            return result;
+            else
+            {
+                throw new DuplicatedException<Resume>(resume);
+            }
+            return resume;
+        }
+
+        private void CreateBlocks(Resume resume)
+        {
+            resume.Blocks.ForEach(block =>
+            {
+                block.UserId = resume.UserId;
+                block.ResumeId = resume.Id;
+                blockBusiness.Insert(block);
+                CreateFields(block);
+            });
+        }
+
+        private void CreateFields(Block block)
+        {
+            block.Fields.ForEach(field =>
+            {
+                field.UserId = block.UserId;
+                field.ResumeId = block.ResumeId;
+                field.BlockId = block.Id;
+                fieldBusiness.Insert(field);
+            });
         }
 
         public Resume Find(string user, string resume)
@@ -72,28 +81,55 @@ namespace OpenResumeAPI.Business
 
         public List<Resume> List(int userId)
         {
-            return repository.FindByUserId(userId);            
+            return repository.FindByUserId(userId);
         }
 
-        public HttpStatusCode UpdateResume(Resume resume)
+        public void UpdateResume(Resume resume)
         {
-            HttpStatusCode result = HttpStatusCode.NotFound;
             Resume current = FindById(resume.Id);
-            if(current !=  null)
+            if (CheckResumeConflict(resume.UserId, resume.Name, current.Id))
             {
-                Resume conflictCheck = repository.FindByUserIdAndName(resume.UserId, resume.Name);
-                if (conflictCheck == null || conflictCheck.Id == current.Id)
-                {
-                    if (repository.Update(resume))                    
-                        resume.Blocks = blockBusiness.UpdateBlocks(current.UserId, current.Id, resume.Blocks);
-                    result = HttpStatusCode.OK;
-                }
-                else
-                {
-                    result = HttpStatusCode.Conflict;
-                }
+                repository.Update(resume);
+                resume.Blocks = blockBusiness.UpdateBlocks(current.UserId, current.Id, resume.Blocks);
             }
-            return result;
-        }        
+            else
+            {
+                throw new DuplicatedException<Resume>();
+            }
+        }
+
+        private bool CheckResume(int userId, string name)
+        {
+            try
+            {
+                repository.FindByUserIdAndName(userId, name);
+                return true;
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return false;
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        private bool CheckResumeConflict(int userId, string name, int resumeId)
+        {
+            try
+            {
+                Resume conflictCheck = repository.FindByUserIdAndName(userId, name);
+                return conflictCheck.Id == resumeId;
+            }
+            catch (NotFoundException<Resume>)
+            {
+                return false;
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
     }
 }
