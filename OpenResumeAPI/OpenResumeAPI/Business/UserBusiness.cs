@@ -49,8 +49,8 @@ namespace OpenResumeAPI.Business
                     {
                         new Claim(ClaimTypes.Name, userId.ToString())
                     }),
-                Issuer = "OpenResumeAPI",
-                Audience = "OpenResumeAPI",
+                Issuer = appSettings.Issuer,
+                Audience = appSettings.Issuer,
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

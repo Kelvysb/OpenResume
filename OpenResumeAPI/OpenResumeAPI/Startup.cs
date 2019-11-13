@@ -93,7 +93,7 @@ namespace OpenResumeAPI
             var security = new Dictionary<string, IEnumerable<string>>
                 {
                     {"Bearer", new string[] { }},
-
+                    {"APIKey", new string[] { }}
                 };
             services.AddSwaggerGen(c =>
             {
@@ -112,6 +112,13 @@ namespace OpenResumeAPI
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.AddSecurityDefinition("APIKey", new ApiKeyScheme
+                {
+                    Description = "Add API Key: \"APIKey: {APIKey}\"",
+                    Name = "APIKey",
                     In = "header",
                     Type = "apiKey"
                 });

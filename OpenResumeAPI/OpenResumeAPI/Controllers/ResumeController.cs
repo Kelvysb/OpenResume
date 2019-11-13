@@ -39,11 +39,16 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 return Ok(business.Find(user, resume));
             }
             catch (NotFoundException<Resume>)
             {
                 return StatusCode((int)HttpStatusCode.NotFound, "RESUME-NOT-FOUNT");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -62,7 +67,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(userId, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(userId, Request.Headers["Authorization"]);
                 return Ok(business.List(userId));
             }
             catch (NotFoundException<Resume>)
@@ -90,7 +96,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(resume.UserId, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(resume.UserId, Request.Headers["Authorization"]);
                 Resume result = business.Create(resume);
                 return Ok(result);
             }
@@ -127,7 +134,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(resume.UserId, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(resume.UserId, Request.Headers["Authorization"]);
                 business.UpdateResume(resume);
                 return Ok();
             }
@@ -160,7 +168,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(resume.UserId, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(resume.UserId, Request.Headers["Authorization"]);
                 business.Delete(resume);
                 return Ok();
             }

@@ -38,11 +38,20 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                User result = business.Login(user);
-                if (result != null)
-                    return Ok(result);
-                else
-                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-LOGIN");
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                return Ok(business.Login(user));
+            }
+            catch (InvalidLoginException)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-LOGIN");
+            }
+            catch (NotFoundException<User>)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-LOGIN");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -63,12 +72,17 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 business.EmailConfirm(token);
                 return Ok();
             }
             catch (InvalidTokenException)
             {
                 return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-CONFIRMATION-TOKEN");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -88,12 +102,17 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 User result = business.PasswordReset(token);
                 return Ok(result);
             }
             catch (InvalidTokenException)
             {
                 return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-RESET-TOKEN");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -113,12 +132,17 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 business.ForgetPassword(email);
                 return Ok();
             }
             catch (InvalidEmailException)
             {
                 return Ok();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -140,7 +164,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(userId, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(userId, Request.Headers["Authorization"]);
                 business.PasswordChange(userId, oldPassword, newPassword);
                 return Ok();
             }
@@ -169,7 +194,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(userId, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(userId, Request.Headers["Authorization"]);
                 User result = business.ByID(userId);
                 return Ok(result);
             }
@@ -199,6 +225,7 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 business.Create(user);
                 return Ok();
             }
@@ -209,6 +236,10 @@ namespace OpenResumeAPI.Controllers
             catch (DuplicateLoginException)
             {
                 return StatusCode((int)HttpStatusCode.Conflict, "USER-DUPLICATED");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
@@ -227,7 +258,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(user.Id, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(user.Id, Request.Headers["Authorization"]);
                 business.Update(user);
                 return Ok();
             }
@@ -256,7 +288,8 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                validator.Validate(user.Id, Request.Headers["Authorization"]);
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(user.Id, Request.Headers["Authorization"]);
                 business.Delete(user);
                 return Ok();
             }

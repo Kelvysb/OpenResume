@@ -18,7 +18,13 @@ namespace OpenResumeAPI.Helpers
             this.appSettings = appSettings;
         }
 
-        public void Validate(int userId, string token)
+        public void ValidateAPI(string key)
+        {
+            if(!appSettings.APIKeys.Contains(key))
+                throw new UnauthorizedAccessException();
+        }
+
+        public void ValidateToken(int userId, string token)
         {
             bool result = false;
             string cleanToken = token.Replace("Bearer ", "");
@@ -44,8 +50,8 @@ namespace OpenResumeAPI.Helpers
                 ValidateLifetime = true,
                 ValidateAudience = true,
                 ValidateIssuer = true,
-                ValidIssuer = "OpenResumeAPI",
-                ValidAudience = "OpenResumeAPI",
+                ValidIssuer = appSettings.Issuer,
+                ValidAudience = appSettings.Issuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Secret))
             };
         }
