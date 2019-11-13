@@ -332,6 +332,9 @@ ASALocalRun/
 #Production Configuration
 **/Config/prod.json
 
+#Logs
+**/Logs/**
+
 
 #Angular
 
