@@ -10,7 +10,7 @@
                 <form [formGroup]="loginForm" novalidate>
                     <div class="row">
                         <div class="col-12">
-                            <openr-input-container errorMessage="{{'LOGIN.ERRORS.INVALID_EMAIL' | translate}}"
+                            <openr-input-container errorMessage="{{'LOGIN.ERRORS.INVALID-EMAIL' | translate}}"
                                 label="{{'LOGIN.EMAIL' | translate}}">
                                 <input type="text" class="form-control" formControlName="email"
                                     placeholder="{{'LOGIN.EMAIL' | translate}}" autocomplete="off">
@@ -42,7 +42,7 @@
                 </form>
             </div>
             <div class="card-footer">
-                <openr-message Message="Test Message" Error="false" #Message></openr-message>
+                <openr-message #Message></openr-message>
             </div>
         </div>
     </div>

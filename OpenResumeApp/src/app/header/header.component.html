@@ -9,7 +9,9 @@
             <button type="button" class="btn btn-outline-light" [routerLink]="['/login']"><i class="fa fa-lock"></i>&nbsp;{{'SIGN_IN' | translate}}</button>
         </div>
         <div *ngIf="IsUserLogged()" class="col-md-5 LoginButtons">
-            <button type="button" class="btn btn-outline-light" (click)="logout()"><i class="fa fa-lock"></i>&nbsp;{{'SIGN_OUT' | translate}}</button>
+            <button *ngIf="!IsHome()" type="button" class="btn btn-outline-light" [routerLink]="['/user']"><i class="fa fa-home"></i>&nbsp;{{'HOME' | translate}}</button>
+            <button *ngIf="IsHome()"type="button" class="btn btn-outline-light" [routerLink]="['/edit']"><i class="fa fa-cogs"></i>&nbsp;{{'CONFIG' | translate}}</button>
+            <button type="button" class="btn btn-outline-light" (click)="Logout()"><i class="fa fa-lock"></i>&nbsp;{{'SIGN_OUT' | translate}}</button>
         </div>
         <div class="col-md-1"></div>
     </div>

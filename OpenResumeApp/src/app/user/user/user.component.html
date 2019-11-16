@@ -1,1 +1,21 @@
-<p>Welcome {{user.name}}</p>
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+        <p>Welcome {{user.name}}</p>
+        <div class="row">
+            <div class="col-5">
+                <openr-resume-card ></openr-resume-card>            
+            </div>
+            <div class="col-2"></div>
+            <div class="col-5">
+                <openr-resume-card></openr-resume-card>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <openr-message #Message></openr-message>
+            </div>
+        </div>
+    </div>
+    <div class="col-2"></div>
+</div>

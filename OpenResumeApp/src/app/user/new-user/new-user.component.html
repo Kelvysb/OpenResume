@@ -1,1 +1,76 @@
-<p>new-user works!</p>
+<div class="row"></div>
+<div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+        <div class="login-box card">
+            <div class="card-header">
+                <h3>{{'NEW-USER.TITLE' | translate}}</h3>
+            </div>
+            <div class="card-body">
+                <form [formGroup]="userForm" novalidate>
+                    <div class="row">
+                        <div class="col-12">
+                            <openr-input-container errorMessage="{{'ERRORS.REQUIRED' | translate}}"
+                                label="{{'NEW-USER.USER-NAME' | translate}}">
+                                <input type="text" class="form-control" formControlName="userName"
+                                    placeholder="{{'NEW-USER.USER-NAME' | translate}}" autocomplete="off">
+                            </openr-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <openr-input-container errorMessage="{{'ERRORS.REQUIRED' | translate}}"
+                                label="{{'NEW-USER.FIRST-NAME' | translate}}">
+                                <input type="text" class="form-control" formControlName="firstName"
+                                    placeholder="{{'NEW-USER.FIRST-NAME' | translate}}" autocomplete="off">
+                            </openr-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <openr-input-container errorMessage="{{'ERRORS.REQUIRED' | translate}}"
+                                label="{{'NEW-USER.LAST-NAME' | translate}}">
+                                <input type="text" class="form-control" formControlName="lastName"
+                                    placeholder="{{'NEW-USER.LAST-NAME' | translate}}" autocomplete="off">
+                            </openr-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <openr-input-container errorMessage="{{'ERRORS.REQUIRED' | translate}}"
+                                label="{{'LOGIN.PASSWORD' | translate}}">
+                                <input type="password" class="form-control" formControlName="password"
+                                    placeholder="{{'LOGIN.PASSWORD' | translate}}" autocomplete="off">
+                            </openr-input-container>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-12">
+                                <openr-input-container errorMessage="{{'ERRORS.REQUIRED' | translate}}"
+                                    label="{{'LOGIN.CONFIRM-PASSWORD' | translate}}">
+                                    <input type="password" class="form-control" formControlName="confirmPassword"
+                                        placeholder="{{'LOGIN.CONFIRM-PASSWORD' | translate}}" autocomplete="off">
+                                </openr-input-container>
+                                <div class="col-sm-3 col-xs-12">
+                                    <span *ngIf="userForm.hasError('passwordNotMatch')" class="help-block pull-right has-error-block"><i class="fa fa-remove"></i>{{NEW-USER.ERRORS.PASSWORD-MATCH | translate}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-12 align-content-center">
+                            <button (click)="confirm()" href="#" [disabled]="!userForm.valid"
+                                class="btn btn-success pull-right">
+                                <i class="fa fa-lock"></i> {{'SIGN_IN' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <openr-message #Message></openr-message>
+            </div>
+        </div>
+    </div>
+    <div class="col-4"></div>
+</div>
+<div class="row"></div>

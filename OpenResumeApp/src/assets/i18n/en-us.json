@@ -1,7 +1,9 @@
 {
-    "SIGN_IN": "Login",
-    "SIGN_OUT": "Sign Out",
+    "SIGN-IN": "Login",
+    "SIGN-OUT": "Sign Out",
     "REGISTER": "Register",
+    "CONFIG": "Settings",
+    "HOME": "Home",
     "OK": "Ok",
     "LOGIN": {
         "TITLE": "Login",
@@ -10,8 +12,23 @@
         "FORGET": "Forget password?",        
         "CONFIRMATION": "Please confirm your e-mail address by the link sended.",
         "ERRORS": {
-            "INVALID_EMAIL": "Invalid e-mail.",
-            "INVALID_LOGIN": "Invalid E-mail or Password."
+            "INVALID-EMAIL": "Invalid e-mail.",
+            "INVALID-LOGIN": "Invalid E-mail or Password."
+        }        
+    },  
+    "NEW-USER": {
+        "TITLE": "New User",
+        "USER-NAME": "User Name",
+        "FIRST-NAME": "Fisrt Name",
+        "LAST-NAME": "Surname",
+        "EMAIL": "E-mail",
+        "PASSWORD": "Password",
+        "CONFIRM-PASSWORD": "Confirm Password",
+        "ERRORS": {
+            "INVALID-EMAIL": "Invalid e-mail.",
+            "DUPLICATED-LOGIN": "User name already exists.",
+            "DUPLICATED-EMAIL": "E-mail already exists.",
+            "PASSWORD-MATCH": "Passwords not match."
         }        
     },    
     "ERRORS": {

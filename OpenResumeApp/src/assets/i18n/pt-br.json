@@ -1,7 +1,9 @@
 {
-    "SIGN_IN": "Entrar",
-    "SIGN_OUT": "Sair",
-    "REGISTER": "Cadastro",      
+    "SIGN-IN": "Entrar",
+    "SIGN-OUT": "Sair",
+    "REGISTER": "Cadastro",
+    "CONFIG": "Configuração", 
+    "HOME": "Inicio",
     "OK": "Ok",
     "LOGIN": {
         "TITLE": "Login",
@@ -10,9 +12,23 @@
         "FORGET": "Esqueceu a senha?",        
         "CONFIRMATION": "Porfavor confirme seu e-mail no link enviado.",
         "ERRORS": {
-            "INVALID_EMAIL": "E-mail inválido.",
-            "INVALID_LOGIN": "E-mail ou senha inválidos."
+            "INVALID-EMAIL": "E-mail inválido.",
+            "INVALID-LOGIN": "E-mail ou senha inválidos."
         }          
+    },"NEW-USER": {
+        "TITLE": "Novo Usuário",
+        "USER-NAME": "Apelido",
+        "FIRST-NAME": "Primeiro Nome",
+        "LAST-NAME": "Sobrenome",
+        "EMAIL": "E-mail",
+        "PASSWORD": "Senha",
+        "CONFIRM-PASSWORD": "Confirmar Senha",
+        "ERRORS": {
+            "INVALID-EMAIL": "E-mail inválido.",
+            "DUPLICATED-LOGIN": "Apelido já existe.",
+            "DUPLICATED-EMAIL": "E-mail já existe.",
+            "PASSWORD-MATCH": "As senhas não combinão."
+        }        
     },
     "ERRORS": {
         "REQUIRED": "Campo obrigatório."

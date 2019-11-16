@@ -18,15 +18,26 @@ export class UserService {
                     }
                 }
 
-    login(user: User): Observable<User> {
+    Login(user: User): Observable<User> {
 
         const httpOptions = {
             headers: new HttpHeaders({
-              'Content-Type':  'application/json'
+              'Content-Type':  'application/json',
+              APIKey: environment.apikey
             })
         };
-        return this.http.post<User>(`${environment.api}/user/login`, user, httpOptions)
-            .pipe();
+        return this.http.post<User>(`${environment.api}/user/login`, user, httpOptions);
+    }
+
+    Create(user: User): Observable<object> {
+
+        const httpOptions = {
+            headers: new HttpHeaders({
+              'Content-Type':  'application/json',
+              APIKey: environment.apikey
+            })
+        };
+        return this.http.put<object>(`${environment.api}/user`, user, httpOptions);
     }
 
     Loggout() {

@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  api: 'http://api.open-resume.com/api'
+  api: 'http://api.open-resume.com/api',
+  apikey: ''
 };
 
 /*

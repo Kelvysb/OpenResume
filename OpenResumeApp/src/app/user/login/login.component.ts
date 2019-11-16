@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
         passwordHash: Md5.hashStr(this.loginForm.controls.password.value) as string
       };
 
-    this.userService.login(user).subscribe((result: User) => {
+    this.userService.Login(user).subscribe((result: User) => {
         this.ExecuteLogin(result);
       }, (error: any) => {
         this.translate.get('LOGIN.ERRORS.' + error.error).subscribe((text: string) => {
