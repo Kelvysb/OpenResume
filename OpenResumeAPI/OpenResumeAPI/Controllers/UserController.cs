@@ -6,6 +6,7 @@ using OpenResumeAPI.Business.Interfaces;
 using Microsoft.Extensions.Logging;
 using OpenResumeAPI.Helpers.Interfaces;
 using System.Net;
+using OpenResumeAPI.Exceptions;
 
 namespace OpenResumeAPI.Controllers
 {
@@ -37,16 +38,25 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                User result = business.Login(user);
-                if (result != null)
-                    return Ok(result);
-                else
-                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_LOGIN");
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                return Ok(business.Login(user));
+            }
+            catch (InvalidLoginException)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-LOGIN");
+            }
+            catch (NotFoundException<User>)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-LOGIN");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode(500, "LOGIN_ERROR");
+                return StatusCode(500, "LOGIN-ERROR");
             }
         }
 
@@ -62,15 +72,22 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (business.EmailConfirm(token))
-                    return Ok();
-                else
-                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_CONFIRMATION_TOKEN");
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                business.EmailConfirm(token);
+                return Ok();
+            }
+            catch (InvalidTokenException)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-CONFIRMATION-TOKEN");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode(500, "LOGIN_ERROR");
+                return StatusCode(500, "LOGIN-ERROR");
             }
         }
 
@@ -85,16 +102,22 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 User result = business.PasswordReset(token);
-                if (result != null)
-                    return Ok(result);
-                else
-                    return StatusCode((int)HttpStatusCode.Forbidden, "INVALID_RESET_TOKEN");
+                return Ok(result);
+            }
+            catch (InvalidTokenException)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "INVALID-RESET-TOKEN");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode(500, "LOGIN_ERROR");
+                return StatusCode(500, "LOGIN-ERROR");
             }
         }
 
@@ -109,13 +132,22 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
+                validator.ValidateAPI(Request.Headers["APIKey"]);
                 business.ForgetPassword(email);
-                return Ok();                
+                return Ok();
+            }
+            catch (InvalidEmailException)
+            {
+                return Ok();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode(500, "LOGIN_ERROR");
+                return StatusCode(500, "LOGIN-ERROR");
             }
         }
 
@@ -132,24 +164,26 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(userId, Request.Headers["Authorization"]))
-                {                    
-                    if (business.PasswordChange(userId, oldPassword, newPassword))
-                        return Ok();
-                    else
-                        return StatusCode((int)HttpStatusCode.Forbidden, "WRONG_PASSWORD");
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(userId, Request.Headers["Authorization"]);
+                business.PasswordChange(userId, oldPassword, newPassword);
+                return Ok();
+            }
+            catch (InvalidLoginException)
+            {
+                return StatusCode((int)HttpStatusCode.Forbidden, "WRONG-PASSWORD");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "PASSWORD_CHANGE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "PASSWORD-CHANGE-ERROR");
             }
         }
+
 
         /// <summary>
         /// Get user data
@@ -160,23 +194,23 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(userId, Request.Headers["Authorization"]))
-                {
-                    User result = business.ByID(userId);
-                    if (result != null)
-                        return Ok(result);
-                    else
-                        return BadRequest();
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(userId, Request.Headers["Authorization"]);
+                User result = business.ByID(userId);
+                return Ok(result);
+            }
+            catch (NotFoundException<User>)
+            {
+                return BadRequest();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_FIND_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER-FIND-ERROR");
             }
         }
 
@@ -191,18 +225,26 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                HttpStatusCode result = business.Create(user);
-                if (result == HttpStatusCode.OK)
-                    return Ok();               
-                else if (result == HttpStatusCode.Conflict)
-                    return StatusCode((int)result, "USER_DUPLICATED");
-                else
-                    return StatusCode((int)HttpStatusCode.Ambiguous, "EMAIL_DUPLICATED");
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                business.Create(user);
+                return Ok();
+            }
+            catch (DuplicateEmailException)
+            {
+                return StatusCode((int)HttpStatusCode.Conflict, "EMAIL-DUPLICATED");
+            }
+            catch (DuplicateLoginException)
+            {
+                return StatusCode((int)HttpStatusCode.Conflict, "USER-DUPLICATED");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_CREATE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER-CREATE-ERROR");
             }
         }
 
@@ -216,22 +258,23 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(user.Id, Request.Headers["Authorization"]))
-                {
-                    if (business.Update(user))
-                        return Ok();
-                    else
-                        return BadRequest();
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(user.Id, Request.Headers["Authorization"]);
+                business.Update(user);
+                return Ok();
+            }
+            catch (NotFoundException<User>)
+            {
+                return BadRequest();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_UPDATE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER-UPDATE-ERROR");
             }
         }
 
@@ -245,22 +288,23 @@ namespace OpenResumeAPI.Controllers
         {
             try
             {
-                if (validator.Validate(user.Id, Request.Headers["Authorization"]))
-                {
-                    if (business.Delete(user))
-                        return Ok();
-                    else
-                        return BadRequest();
-                }
-                else
-                {
-                    return Unauthorized();
-                }
+                validator.ValidateAPI(Request.Headers["APIKey"]);
+                validator.ValidateToken(user.Id, Request.Headers["Authorization"]);
+                business.Delete(user);
+                return Ok();
+            }
+            catch (NotFoundException<User>)
+            {
+                return BadRequest();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "USER_DELETE_ERROR");
+                return StatusCode((int)HttpStatusCode.InternalServerError, "USER-DELETE-ERROR");
             }
         }
 

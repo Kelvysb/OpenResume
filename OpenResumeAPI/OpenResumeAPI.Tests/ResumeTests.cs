@@ -74,7 +74,7 @@ namespace OpenResumeAPI.Tests
                                                    .Add<Field>(returnFields, 3)
                                                    .AddByValue<Field>(returnFields.Where(item => item.BlockId == 1).ToList(), "BLOCKID", 1)
                                                    .AddByValue<Field>(returnFields.Where(item => item.BlockId == 2).ToList(), "BLOCKID", 2)
-                                                   .AddByValue<Resume>(new List<Resume>(), "NAME", "Resume2")
+                                                   .AddNotFoundByValue<Resume>("NAME", "Resume2")
                                                    .Build();
 
             resumeController = new ResumeController(
@@ -154,6 +154,7 @@ namespace OpenResumeAPI.Tests
             Assert.NotNull(result);
             Assert.IsType<ActionResult<Resume>>(result);
             Assert.Equal(409, (result.Result as ObjectResult).StatusCode);
+            Assert.Equal("RESUME-DUPLICATED", (result.Result as ObjectResult).Value);            
         }
 
         [Fact]

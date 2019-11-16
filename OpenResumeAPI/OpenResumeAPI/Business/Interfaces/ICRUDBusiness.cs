@@ -10,7 +10,7 @@ namespace OpenResumeAPI.Business.Interfaces
         List<Model> ByName(string name);
         int Insert(Model model);
         List<Model> Limit(int limit);
-        bool Update(Model model);
-        bool Delete(Model model);
+        void Update(Model model);
+        void Delete(Model model);
     }
 }

@@ -2,6 +2,7 @@
 using OpenResumeAPI.Helpers.Attributes;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
+using OpenResumeAPI.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +34,7 @@ namespace OpenResumeAPI.Services
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return null;
+                    throw new NotFoundException<Resume>();
                 else
                     throw new System.Exception($"Database Errror: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
@@ -60,7 +61,7 @@ namespace OpenResumeAPI.Services
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return new List<Resume>();
+                    throw new NotFoundException<Resume>();
                 else
                     throw new System.Exception($"Database Errror: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
@@ -90,7 +91,7 @@ namespace OpenResumeAPI.Services
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return null;
+                    throw new NotFoundException<Resume>();
                 else
                     throw new System.Exception($"Database Errror: {dbEx.Code} - {dbEx.Message}", dbEx);
             }

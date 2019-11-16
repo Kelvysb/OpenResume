@@ -1,11 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using OpenResumeAPI.Business.Interfaces;
+using OpenResumeAPI.Exceptions;
 using OpenResumeAPI.Helpers.Interfaces;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -28,17 +28,16 @@ namespace OpenResumeAPI.Business
             User result = repository.FindByEmail(user.Email);
             if (result != null && result.PasswordHash.Equals(user.PasswordHash) && result.EmailConfirmed)
             {
-                result.LastActivity = DateTime.UtcNow;
-                repository.Update(result);
+                UpdateLastActivity(result);
                 result.Token = CreateToken(result.Id);
                 result = ClearSecrets(result);
             }
             else
             {
-                result = null;
+                throw new InvalidLoginException(user);
             }
             return result;
-        }
+        }       
 
         private string CreateToken(int userId)
         {
@@ -50,8 +49,8 @@ namespace OpenResumeAPI.Business
                     {
                         new Claim(ClaimTypes.Name, userId.ToString())
                     }),
-                Issuer = "OpenResumeAPI",
-                Audience = "OpenResumeAPI",
+                Issuer = appSettings.Issuer,
+                Audience = appSettings.Issuer,
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -59,9 +58,8 @@ namespace OpenResumeAPI.Business
             return tokenHandler.WriteToken(token);
         }
 
-        public bool EmailConfirm(string token)
+        public void EmailConfirm(string token)
         {
-            bool result = false;
             User user = repository.FindByConfirmation(token);
             if (user != null && !user.EmailConfirmed)
             {
@@ -69,9 +67,12 @@ namespace OpenResumeAPI.Business
                 user.ConfirmationToken = "";
                 user.UpdatedDate = DateTime.Now;
                 repository.Update(user);
-                result = true;
             }
-            return result;
+            else
+            {
+                throw new InvalidTokenException();
+            }
+
         }
 
         public User PasswordReset(string token)
@@ -89,9 +90,8 @@ namespace OpenResumeAPI.Business
             return result;
         }
 
-        public bool ForgetPassword(string email)
+        public void ForgetPassword(string email)
         {
-            bool result = false;
             User user = repository.FindByEmail(email);
             if (user != null)
             {
@@ -99,28 +99,30 @@ namespace OpenResumeAPI.Business
                 user.ResetToken = emailHelper.CreateToken(user);
                 repository.Update(user);
                 emailHelper.SendResetEmail(user);
-                result = true;
             }
-            return result;
+            else
+            {
+                throw new InvalidEmailException();
+            }
         }
 
-        public bool PasswordChange(int userId, string oldPassword, string newPassword)
+        public void PasswordChange(int userId, string oldPassword, string newPassword)
         {
-            bool result = false;
             User user = repository.ByID(userId);
             if (user != null && user.PasswordHash.Equals(oldPassword))
             {
                 user.PasswordHash = newPassword;
                 user.UpdatedDate = DateTime.Now;
                 repository.Update(user);
-                result = true;
             }
-            return result;
+            else
+            {
+                throw new InvalidLoginException();
+            }
         }
 
-        public override bool Update(User user)
+        public override void Update(User user)
         {
-            bool result = false;
             User currentUser = repository.ByID(user.Id);
             if (currentUser != null)
             {
@@ -128,9 +130,7 @@ namespace OpenResumeAPI.Business
                 currentUser.LastName = user.LastName;
                 currentUser.UpdatedDate = DateTime.Now;
                 repository.Update(user);
-                result = true;
             }
-            return result;
         }
 
         public override User ByID(int id)
@@ -138,25 +138,68 @@ namespace OpenResumeAPI.Business
             return ClearSecrets(base.ByID(id));
         }
 
-        public HttpStatusCode Create(User user)
+        public void Create(User user)
         {
-            HttpStatusCode result = HttpStatusCode.Conflict ;
-            if (repository.FindByLogin(user.Login) == null)
+            if (!CheckByLogin(user.Login))
             {
-                if(repository.FindByEmail(user.Email) == null)
+                if(!CheckByEmail(user.Email))
                 {
                     user.EmailConfirmed = false;
                     user.ConfirmationToken = emailHelper.CreateToken(user);
                     user.Id = repository.Insert(user);
                     emailHelper.SendConfirmationEmail(user);
-                    result = HttpStatusCode.OK;
                 }
                 else
                 {
-                    result = HttpStatusCode.Ambiguous;
+                    throw new DuplicateEmailException();
                 }
             }
-            return result;
+            else
+            {
+                throw new DuplicateLoginException();
+            }
+        }
+
+        private bool CheckByLogin(string login)
+        {
+            try
+            {
+                repository.FindByLogin(login);
+                return true;
+            }
+            catch(NotFoundException<User>)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private bool CheckByEmail(string email)
+        {
+            try
+            {
+                repository.FindByEmail(email);
+                return true;
+            }
+            catch (NotFoundException<User>)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        private void UpdateLastActivity(User user)
+        {
+            user.LastActivity = DateTime.UtcNow;
+            repository.Update(user);
         }
 
         private User ClearSecrets(User user)

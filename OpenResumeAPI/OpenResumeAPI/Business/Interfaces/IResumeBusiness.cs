@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using OpenResumeAPI.Models;
 
 namespace OpenResumeAPI.Business.Interfaces
@@ -8,7 +7,7 @@ namespace OpenResumeAPI.Business.Interfaces
     {
         List<Resume> List(int userId);
         Resume Find(string user, string resume);
-        (HttpStatusCode, Resume) Create(Resume resume);
-        HttpStatusCode UpdateResume(Resume resume);
+        Resume Create(Resume resume);
+        void UpdateResume(Resume resume);
     }
 }

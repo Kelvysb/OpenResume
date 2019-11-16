@@ -45,8 +45,8 @@ namespace OpenResumeAPI.Tests
 
             IDataBaseFactory dataBaseFactory = new DataBaseHelper()
                                                    .Add<User>(returnUsers, 1)
-                                                   .AddByValue<User>(new List<User>(), "LOGIN", "Lovecraft2")
-                                                   .AddByValue<User>(new List<User>(), "EMAIL", "Lovecraft2@test.com")
+                                                   .AddNotFoundByValue<User>("LOGIN", "Lovecraft2")
+                                                   .AddNotFoundByValue<User>("EMAIL", "Lovecraft2@test.com")
                                                    .AddByValue<User>(returnUsersTokens, "CONFIRMATION", "FAKE_CONFIRMATION_TOKEN")
                                                    .AddByValue<User>(returnUsersTokens, "RESET", "FAKE_RESET_TOKEN")
                                                    .Build();
@@ -178,6 +178,7 @@ namespace OpenResumeAPI.Tests
             Assert.NotNull(result);
             Assert.IsType<ObjectResult>(result);
             Assert.Equal(409, (result as ObjectResult).StatusCode);
+            Assert.Equal("USER-DUPLICATED", (result as ObjectResult).Value);
 
         }
 
@@ -192,7 +193,8 @@ namespace OpenResumeAPI.Tests
 
             Assert.NotNull(result);
             Assert.IsType<ObjectResult>(result);
-            Assert.Equal(300, (result as ObjectResult).StatusCode);
+            Assert.Equal(409, (result as ObjectResult).StatusCode);
+            Assert.Equal("EMAIL-DUPLICATED", (result as ObjectResult).Value);
 
         }
 

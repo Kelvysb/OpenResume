@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Principal;
+using System;
 
 namespace OpenResumeAPI.Helpers
 {
@@ -17,7 +18,13 @@ namespace OpenResumeAPI.Helpers
             this.appSettings = appSettings;
         }
 
-        public bool Validate(int userId, string token)
+        public void ValidateAPI(string key)
+        {
+            if(!appSettings.APIKeys.Contains(key))
+                throw new UnauthorizedAccessException();
+        }
+
+        public void ValidateToken(int userId, string token)
         {
             bool result = false;
             string cleanToken = token.Replace("Bearer ", "");
@@ -32,7 +39,8 @@ namespace OpenResumeAPI.Helpers
                                         .FirstOrDefault()
                                         .Value.Equals(userId.ToString());
             }
-            return result;
+            if (!result)
+                throw new UnauthorizedAccessException();
         }
 
         private TokenValidationParameters ValidationSettings()
@@ -42,8 +50,8 @@ namespace OpenResumeAPI.Helpers
                 ValidateLifetime = true,
                 ValidateAudience = true,
                 ValidateIssuer = true,
-                ValidIssuer = "OpenResumeAPI",
-                ValidAudience = "OpenResumeAPI",
+                ValidIssuer = appSettings.Issuer,
+                ValidAudience = appSettings.Issuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.Secret))
             };
         }

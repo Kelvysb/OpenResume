@@ -1,4 +1,5 @@
 ﻿using BDataBaseStandard;
+using OpenResumeAPI.Exceptions;
 using OpenResumeAPI.Helpers.Attributes;
 using OpenResumeAPI.Models;
 using OpenResumeAPI.Services.Interfaces;
@@ -28,174 +29,197 @@ namespace OpenResumeAPI.Services
         {
             try
             {
-
-                return dataBase.fnExecute<Model>($@"Select 
-                                                    {Columns()}
-                                                from 
-                                                    {tableName}");
+                return ExecuteAll();
             }
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return new List<Model>();
+                    throw new NotFoundException<Model>();
                 else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }
+        }
+
+        private List<Model> ExecuteAll()
+        {
+            return dataBase.fnExecute<Model>($@"Select 
+                                                    {Columns()}
+                                                from 
+                                                    {tableName}");
         }
 
         public virtual List<Model> Limit(int limit)
         {
             try
             {
-                return dataBase.fnExecute<Model>($@"Select top {limit}
-                                                    {Columns()}
-                                                from 
-                                                    {tableName}");
+                return ExecuteLimit(limit);
             }
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return new List<Model>();
+                    throw new NotFoundException<Model>();
                 else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }
+        }
+
+        private List<Model> ExecuteLimit(int limit)
+        {
+            return dataBase.fnExecute<Model>($@"Select top {limit}
+                                                    {Columns()}
+                                                from 
+                                                    {tableName}");
         }
 
         public virtual Model ByID(int Id)
         {         
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("ID", Id);
+                return ExecuteById(Id);
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    throw new NotFoundException<Model>();
+                else
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
-                return dataBase.fnExecute<Model>($@"Select
+        private Model ExecuteById(int Id)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("ID", Id);
+
+            return dataBase.fnExecute<Model>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     id = @ID", par)
-                                .FirstOrDefault();
-            }
-            catch (DataBaseException dbEx)
-            {
-                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return null;
-                else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
+                            .FirstOrDefault();
         }
 
         public virtual List<Model> ByName(string name)
         {          
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("NAME", name);
+                return ExecuteByName(name);
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    throw new NotFoundException<Model>();
+                else
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
-                return dataBase.fnExecute<Model>($@"Select
+        private List<Model> ExecuteByName(string name)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("NAME", name);
+
+            return dataBase.fnExecute<Model>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     name = @NAME", par);
-            }
-            catch (DataBaseException dbEx)
-            {
-                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return new List<Model>();
-                else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
         }
 
         public virtual List<Model> ByDescription(string description)
         {         
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("DESCRIPTION", description);
+                return ExecuteByDescription(description);
+            }
+            catch (DataBaseException dbEx)
+            {
+                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
+                    throw new NotFoundException<Model>();
+                else
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
-                return dataBase.fnExecute<Model>($@"Select
+        private List<Model> ExecuteByDescription(string description)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("DESCRIPTION", description);
+
+            return dataBase.fnExecute<Model>($@"Select
                                                     {Columns()}
                                                 from 
                                                     {tableName}
                                                 where
                                                     description like @DESCRIPTION", par);
-            }
-            catch (DataBaseException dbEx)
-            {
-                if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return new List<Model>();
-                else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
         }
 
         public virtual int Insert(Model model)
         {
             try
             {
-                return dataBase.fnExecute<int>($@"insert into {tableName} (
-                                                    {ColumnsForInsert()}
-                                                ) output inserted.id 
-                                                values (
-                                                     {ColumnsParametersForInsert()}
-                                                )", Parameters(model))
-                            .FirstOrDefault();
+                return ExecuteInsert(model);
             }
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.Duplicated)
-                    return 0;
+                    throw new DuplicatedException<Model>(model);
                 else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }           
         }
 
-        public virtual bool Update(Model model)
+        private int ExecuteInsert(Model model)
+        {
+            return dataBase.fnExecute<int>($@"insert into {tableName} (
+                                                    {ColumnsForInsert()}
+                                                ) output inserted.id 
+                                                values (
+                                                     {ColumnsParametersForInsert()}
+                                                )", Parameters(model))
+                                        .FirstOrDefault();
+        }
+
+        public virtual void Update(Model model)
         {
             try
             {
-                return dataBase.fnExecute<int>($@"update {tableName} SET
-                                                    {ColumnsParametersForUpdate()}
-                                                    output inserted.id 
-                                                where
-                                                    id = @ID
-                                                ", Parameters(model))
-                          .Any();
+                ExecuteUpdate(model);
             }
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return false;
+                    throw new NotFoundException<Model>(model);
                 else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -203,30 +227,42 @@ namespace OpenResumeAPI.Services
           
         }
 
-        public virtual bool Delete(Model model)
+        private void ExecuteUpdate(Model model)
+        {
+            dataBase.sbExecute($@"update {tableName} SET
+                                                    {ColumnsParametersForUpdate()}
+                                                where
+                                                    id = @ID
+                                                ", Parameters(model));
+        }
+
+        public virtual void Delete(Model model)
         {
             try
             {
-                Dictionary<string, object> par = new Dictionary<string, object>();
-                par.Add("ID", model.Id);
-                return dataBase.fnExecute<int>($@"delete from {tableName}                                                    
-                                                    output deleted.id 
-                                                where
-                                                    id = @ID
-                                                ", par)
-                               .Any();
+                ExecuteDelete(model);
             }
             catch (DataBaseException dbEx)
             {
                 if (dbEx.Code == DataBaseException.enmDataBaseExeptionCode.NotExists)
-                    return false;
+                    throw new NotFoundException<Model>(model);
                 else
-                    throw new System.Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
+                    throw new Exception($"Database Error: {dbEx.Code} - {dbEx.Message}", dbEx);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 throw;
             }          
+        }
+
+        private void ExecuteDelete(Model model)
+        {
+            Dictionary<string, object> par = new Dictionary<string, object>();
+            par.Add("ID", model.Id);
+            dataBase.sbExecute($@"delete from {tableName}                                                    
+                                        where
+                                            id = @ID
+                                        ", par);
         }
 
         protected virtual string Columns()
