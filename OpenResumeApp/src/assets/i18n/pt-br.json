@@ -15,19 +15,25 @@
             "INVALID-EMAIL": "E-mail inválido.",
             "INVALID-LOGIN": "E-mail ou senha inválidos."
         }          
-    },"NEW-USER": {
+    },
+    "NEW-USER": {
         "TITLE": "Novo Usuário",
         "USER-NAME": "Apelido",
         "FIRST-NAME": "Primeiro Nome",
         "LAST-NAME": "Sobrenome",
         "EMAIL": "E-mail",
+        "CONFIRM-EMAIL": "Confirmar E-mail",
         "PASSWORD": "Senha",
         "CONFIRM-PASSWORD": "Confirmar Senha",
+        "REGISTER": "Registrar",
         "ERRORS": {
             "INVALID-EMAIL": "E-mail inválido.",
             "DUPLICATED-LOGIN": "Apelido já existe.",
             "DUPLICATED-EMAIL": "E-mail já existe.",
-            "PASSWORD-MATCH": "As senhas não combinão."
+            "PASSWORD-MATCH": "As senhas não combinão.",
+            "EMAIL-MATCH": "Os e-mails não combinam.",
+            "PASSWORD-LENGTH": "A senha deve ter pelo menos 6 caracteres.",
+            "USER-LENGTH": "O nome do usuário deve ter pelo menos 6 caracteres."
         }        
     },
     "ERRORS": {

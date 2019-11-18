@@ -7,7 +7,7 @@ import { MessageComponent } from 'src/app/shared/message/message.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
-import { HeaderComponent } from 'src/app/header/header.component';
+import { ErrorMessage } from 'src/app/shared/input-container/error-message.model';
 
 @Component({
   selector: 'openr-login',
@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit {
   @ViewChild('Message', {static: false}) Message: MessageComponent;
   loginForm: FormGroup;
   emailPattern = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  errorMessagesRequired: ErrorMessage[] = [new ErrorMessage('required', 'ERRORS.REQUIRED')];
 
   constructor(private formBuilder: FormBuilder,
               private userService: UserService,

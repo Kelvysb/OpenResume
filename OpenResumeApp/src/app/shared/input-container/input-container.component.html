@@ -1,7 +1,8 @@
-<div class="form-group has-success" [class.has-success]="hasSuccess()"
-                                    [class.has-error]="hasError()">
+<div class="form-group has-success" [class.has-success]="CheckOk()" [class.has-error]="CheckErrors()">
   <label>{{label}}</label>
   <ng-content></ng-content>    
-  <span *ngIf="hasSuccess()" class="help-block"><i class="fa fa-check"></i>{{'OK' | translate}}</span>
-  <span *ngIf="hasError()" class="help-block"><i class="fa fa-remove"></i>{{errorMessage}}</span>
+  <span *ngIf="CheckOk()" class="help-block"><i class="fa fa-check"></i>{{'OK' | translate}}</span>
+  <div *ngFor="let item of ErrorMessages">
+    <span *ngIf="HasError(item.error)" class="help-block"><i class="fa fa-remove"></i>{{item.message | translate}}</span>
+  </div>
 </div>

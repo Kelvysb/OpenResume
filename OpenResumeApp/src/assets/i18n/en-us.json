@@ -22,13 +22,18 @@
         "FIRST-NAME": "Fisrt Name",
         "LAST-NAME": "Surname",
         "EMAIL": "E-mail",
+        "CONFIRM-EMAIL": "Confirm E-mail",
         "PASSWORD": "Password",
         "CONFIRM-PASSWORD": "Confirm Password",
+        "REGISTER": "Register",
         "ERRORS": {
             "INVALID-EMAIL": "Invalid e-mail.",
             "DUPLICATED-LOGIN": "User name already exists.",
             "DUPLICATED-EMAIL": "E-mail already exists.",
-            "PASSWORD-MATCH": "Passwords not match."
+            "PASSWORD-MATCH": "Passwords not match.",
+            "EMAIL-MATCH": "E-Mails not match.",
+            "PASSWORD-LENGTH": "Password must have at least 6 characters.",
+            "USER-LENGTH": "User name must have at least 6 characters."
         }        
     },    
     "ERRORS": {
