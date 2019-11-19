@@ -6,12 +6,24 @@
         </div>
         <div *ngIf="!IsUserLogged()" class="col-md-5 LoginButtons">
             <button type="button" class="btn btn-outline-light" [routerLink]="['/newuser']" ><i class="fa fa-sign-in">&nbsp;</i>{{'REGISTER' | translate}}</button>
-            <button type="button" class="btn btn-outline-light" [routerLink]="['/login']"><i class="fa fa-lock"></i>&nbsp;{{'SIGN_IN' | translate}}</button>
+            <button type="button" class="btn btn-outline-light" [routerLink]="['/login']"><i class="fa fa-lock"></i>&nbsp;{{'SIGN-IN' | translate}}</button>            
+            <span class="btn btn-outline-light">
+                <i class="fa fa-globe"></i>&nbsp;
+                <select class="select2-dropdown" (change)="LanguageChange($event.target.value)" [(ngModel)]="selectedLanguage">
+                    <option *ngFor="let lang of languageService.Languages" value="{{lang.code}}">{{lang.name | translate}}</option>
+                </select>
+            </span>
         </div>
         <div *ngIf="IsUserLogged()" class="col-md-5 LoginButtons">
             <button *ngIf="!IsHome()" type="button" class="btn btn-outline-light" [routerLink]="['/user']"><i class="fa fa-home"></i>&nbsp;{{'HOME' | translate}}</button>
             <button *ngIf="IsHome()"type="button" class="btn btn-outline-light" [routerLink]="['/edit']"><i class="fa fa-cogs"></i>&nbsp;{{'CONFIG' | translate}}</button>
-            <button type="button" class="btn btn-outline-light" (click)="Logout()"><i class="fa fa-lock"></i>&nbsp;{{'SIGN_OUT' | translate}}</button>
+            <button type="button" class="btn btn-outline-light" (click)="Logout()"><i class="fa fa-lock"></i>&nbsp;{{'SIGN-OUT' | translate}}</button>
+            <span class="btn btn-outline-light">
+                <i class="fa fa-globe"></i>&nbsp;
+                <select class="select2-dropdown" (change)="LanguageChange($event.target.value)" [(ngModel)]="selectedLanguage">
+                    <option *ngFor="let lang of languageService.Languages" value="{{lang.code}}">{{lang.name | translate}}</option>
+                </select>
+            </span>
         </div>
         <div class="col-md-1"></div>
     </div>

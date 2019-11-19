@@ -2,12 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user.model';
-import {Md5} from 'ts-md5/dist/md5';
+import { Md5 } from 'ts-md5/dist/md5';
 import { MessageComponent } from 'src/app/shared/message/message.component';
 import { TranslateService } from '@ngx-translate/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { ErrorMessage } from 'src/app/shared/input-container/error-message.model';
+import { PatternService } from '../../shared/pattern.service';
+import { ErrorService } from '../../shared/error.service';
+import { LanguageService } from '../../shared/language.service';
 
 @Component({
   selector: 'openr-login',
@@ -18,24 +21,25 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('Message', {static: false}) Message: MessageComponent;
   loginForm: FormGroup;
-  emailPattern = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
   errorMessagesRequired: ErrorMessage[] = [new ErrorMessage('required', 'ERRORS.REQUIRED')];
 
   constructor(private formBuilder: FormBuilder,
               private userService: UserService,
               private translate: TranslateService,
+              private patternService: PatternService,
+              public errorService: ErrorService,
               private cookieService: CookieService,
-              private router: Router) {
-    translate.setDefaultLang('en-us');
-    translate.use('en-us');
-  }
+              private languageService: LanguageService,
+              private router: Router) { }
   ngOnInit() {
+    this.translate.use(this.languageService.Current());
+
     if (this.cookieService.check('User')) {
       this.router.navigateByUrl('/user');
     }
 
     this.loginForm = this.formBuilder.group({
-      email: this.formBuilder.control('', [Validators.required, Validators.pattern(this.emailPattern)]),
+      email: this.formBuilder.control('', [Validators.required, Validators.pattern(this.patternService.Email)]),
       password: this.formBuilder.control('', [Validators.required])
     });
   }

@@ -1,7 +1,8 @@
-import { Component, OnInit, Inject, Injectable } from '@angular/core';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, OnInit, Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { UserService } from '../user/user.service';
+import { LanguageService } from '../shared/language.service';
 
 @Injectable()
 @Component({
@@ -11,14 +12,16 @@ import { UserService } from '../user/user.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private translate: TranslateService,
-              private router: Router,
-              private userService: UserService) {
-    this.translate.setDefaultLang('en-us');
-    this.translate.use('en-us');
-  }
+  selectedLanguage: string;
+
+  constructor(private router: Router,
+              private userService: UserService,
+              public languageService: LanguageService,
+              private translate: TranslateService) { }
 
   ngOnInit() {
+    this.selectedLanguage = this.languageService.Current();
+    this.translate.use(this.selectedLanguage);
   }
 
   Logout() {
@@ -32,6 +35,10 @@ export class HeaderComponent implements OnInit {
 
   IsUserLogged(): boolean {
     return this.userService.IsUserLogged();
+  }
+
+  LanguageChange(language) {
+    this.languageService.Set(language);
   }
 
 }

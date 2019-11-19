@@ -42,6 +42,9 @@ import { MessageComponent } from './shared/message/message.component';
 import { CookieService } from 'ngx-cookie-service';
 import { ResumeCardComponent } from './resume/resume-card/resume-card.component';
 import { ResumeService } from './resume/resume.service';
+import { PatternService } from './shared/pattern.service';
+import { ErrorService } from './shared/error.service';
+import { LanguageService } from './shared/language.service';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -90,6 +93,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     HttpClientModule,
     MatSnackBarModule,
     NotifyService,
+    PatternService,
+    ErrorService,
+    LanguageService,
     RouterModule.forRoot(ROUTES, {preloadingStrategy: PreloadAllModules}),
     TranslateModule.forRoot({
       loader: {

@@ -10,7 +10,7 @@
                 <form [formGroup]="loginForm" novalidate>
                     <div class="row">
                         <div class="col-12">
-                            <openr-input-container [ErrorMessages]="errorMessagesRequired"
+                            <openr-input-container [ErrorMessages]="errorService.Email"
                                 label="{{'LOGIN.EMAIL' | translate}}">
                                 <input type="text" class="form-control" formControlName="email"
                                     placeholder="{{'LOGIN.EMAIL' | translate}}" autocomplete="off">
@@ -19,7 +19,7 @@
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <openr-input-container [ErrorMessages]="errorMessagesRequired"
+                            <openr-input-container [ErrorMessages]="errorService.Required"
                                 label="{{'LOGIN.PASSWORD' | translate}}">
                                 <input type="password" class="form-control" formControlName="password"
                                     placeholder="{{'LOGIN.PASSWORD' | translate}}" autocomplete="off">
@@ -30,7 +30,7 @@
                         <div class="col-12 align-content-center">
                             <button (click)="login()" href="#" [disabled]="!loginForm.valid"
                                 class="btn btn-success pull-right">
-                                <i class="fa fa-lock"></i> {{'SIGN_IN' | translate}}
+                                <i class="fa fa-lock"></i> {{'SIGN-IN' | translate}}
                             </button>
                         </div>
                     </div>

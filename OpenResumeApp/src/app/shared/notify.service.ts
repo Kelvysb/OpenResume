@@ -8,7 +8,7 @@ export class NotifyService {
 
     verticalPosition: MatSnackBarVerticalPosition = 'top';
     horizontalPosition: MatSnackBarHorizontalPosition = 'center';
-    
+
     notify(message: string, action: string, timeout: number) {
         const config = new MatSnackBarConfig();
         config.duration = timeout;

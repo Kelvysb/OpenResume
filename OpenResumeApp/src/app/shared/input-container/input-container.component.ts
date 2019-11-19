@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ContentChild, AfterContentInit } from '@angul
 import { NgModel, FormControlName } from '@angular/forms';
 import { ErrorMessage } from './error-message.model';
 import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '../language.service';
 
 @Component({
   selector: 'openr-input-container',
@@ -15,12 +16,11 @@ export class InputContainerComponent implements OnInit, AfterContentInit {
   @ContentChild(NgModel, {static: false}) model: NgModel;
   @ContentChild(FormControlName, {static: false}) control: FormControlName;
 
-  constructor(private translate: TranslateService) {
-    translate.setDefaultLang('en-us');
-    translate.use('en-us');
-   }
+  constructor(private translate: TranslateService,
+              private languageService: LanguageService) { }
 
   ngOnInit() {
+    this.translate.use(this.languageService.Current());
   }
 
   ngAfterContentInit(): void {
