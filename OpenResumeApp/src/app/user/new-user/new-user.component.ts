@@ -12,8 +12,7 @@ import { LanguageService } from '../../shared/language.service';
 
 @Component({
   selector: 'openr-new-user',
-  templateUrl: './new-user.component.html',
-  styleUrls: ['./new-user.component.scss']
+  templateUrl: './new-user.component.html'
 })
 export class NewUserComponent implements OnInit {
 
@@ -62,10 +61,12 @@ export class NewUserComponent implements OnInit {
 
   Confirm() {
     const user: User = {
+      login: this.userForm.controls.userName.value,
+      name: this.userForm.controls.firstName.value,
+      lastName: this.userForm.controls.lastName.value,
       email: this.userForm.controls.email.value,
       passwordHash: Md5.hashStr(this.userForm.controls.password.value) as string
     };
-
     this.userService.Login(user).subscribe((result: User) => {
       this.ExecuteConfirm();
     }, (error: any) => {

@@ -10,12 +10,14 @@ import { ConfirmEmailComponent } from './user/confirm-email/confirm-email.compon
 import { ResumeComponent } from './resume/resume/resume.component';
 import { ResumeEditComponent } from './resume/resume-edit/resume-edit.component';
 import { UserComponent } from './user/user/user.component';
+import { NewUserConfirmationComponent } from './user/new-user/new-user-confirmation/new-user-confirmation.component';
 
 export const ROUTES: Routes = [
     {path: '', component: HomeComponent},
     {path: 'login', component: LoginComponent},
     {path: 'user', component: UserComponent},
     {path: 'newuser', component: NewUserComponent},
+    {path: 'newuser/confirmation', component: NewUserConfirmationComponent},
     {path: 'edit', component: EditUserComponent},
     {path: 'forgetpassword', component: ForgetPasswordComponent},
     {path: 'resetpassword', component: ResetPasswordComponent},

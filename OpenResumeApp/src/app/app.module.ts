@@ -45,6 +45,7 @@ import { ResumeService } from './resume/resume.service';
 import { PatternService } from './shared/pattern.service';
 import { ErrorService } from './shared/error.service';
 import { LanguageService } from './shared/language.service';
+import { NewUserConfirmationComponent } from './user/new-user/new-user-confirmation/new-user-confirmation.component';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -80,7 +81,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     UserComponent,
     InputContainerComponent,
     MessageComponent,
-    ResumeCardComponent
+    ResumeCardComponent,
+    NewUserConfirmationComponent
   ],
   imports: [
     UserService,

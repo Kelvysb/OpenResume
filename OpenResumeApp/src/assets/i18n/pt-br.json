@@ -28,6 +28,11 @@
         "PASSWORD": "Senha",
         "CONFIRM-PASSWORD": "Confirmar Senha",
         "REGISTER": "Registrar",
+        "CONFIRMATION-TITLE": "Confirmação",
+        "CONFIRMATION-1": "Por favor verifique a sua caixa de entrada por um email de confirmação.",
+        "CONFIRMATION-2": "Clique no link do email para confirmar seu endereço de email.",
+        "CONFIRMATION-3": "O link de confirmação estará disponível por 24 horas.",
+        "CONFIRMATION-4": "Após a confirmação você pode prosseguir com o login.",
         "ERRORS": {
             "INVALID-EMAIL": "E-mail inválido.",
             "DUPLICATED-LOGIN": "Apelido já existe.",

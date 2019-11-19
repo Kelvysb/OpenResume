@@ -14,8 +14,7 @@ import { LanguageService } from '../../shared/language.service';
 
 @Component({
   selector: 'openr-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
 

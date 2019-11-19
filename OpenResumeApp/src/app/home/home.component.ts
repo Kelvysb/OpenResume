@@ -6,8 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'openr-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit {
 

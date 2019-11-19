@@ -28,6 +28,11 @@
         "PASSWORD": "Password",
         "CONFIRM-PASSWORD": "Confirm Password",
         "REGISTER": "Register",
+        "CONFIRMATION-TITLE": "Confirmation.",
+        "CONFIRMATION-1": "Please check your inbox for a confirmation email.",
+        "CONFIRMATION-2": "Click on the link in the email to confirm your email address. ",
+        "CONFIRMATION-3": "The confirmation link will be avalible for 24 hours.",
+        "CONFIRMATION-4": "After the confirmation you can proceed to the login.",
         "ERRORS": {
             "INVALID-EMAIL": "Invalid e-mail.",
             "DUPLICATED-LOGIN": "User name already exists.",

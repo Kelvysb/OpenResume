@@ -3,8 +3,7 @@ import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'openr-message',
-  templateUrl: './message.component.html',
-  styleUrls: ['./message.component.scss']
+  templateUrl: './message.component.html'
 })
 export class MessageComponent implements OnInit {
 
